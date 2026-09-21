@@ -163,152 +163,262 @@
     body.is-fullscreen #exitFullscreenBtn {
       display: flex !important;
     }
+    /* 真实的仿真手绘笔尖鼠标指针 (45度倾斜，直观落笔感) */
+    .cursor-pen-nib {
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M2 30 L6 18 L18 6 L26 14 L14 26 Z' fill='%23f43f5e' stroke='%23ffffff' stroke-width='1.5'/%3E%3Ccircle cx='10' cy='22' r='2' fill='%23ffffff'/%3E%3Cpath d='M2 30 L6 26' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='2' cy='30' r='1.2' fill='%23fbbf24'/%3E%3C/svg%3E") 2 30, crosshair !important;
+    }
     .selection-box {
-      border: 1.5px dashed #f43f5e;
-      background: rgba(244, 63, 94, 0.08);
+      border: 1.5px solid #2563eb;
+      background: rgba(37, 99, 235, 0.06);
       position: absolute;
       pointer-events: auto;
       cursor: move;
       touch-action: none;
       box-sizing: border-box;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.4);
     }
     .selection-handle {
-      width: 12px;
-      height: 12px;
+      width: 9px;
+      height: 9px;
       background: #ffffff;
-      border: 2px solid #e11d48;
-      border-radius: 50%;
+      border: 1.5px solid #2563eb;
+      border-radius: 1px;
       position: absolute;
       pointer-events: auto;
       touch-action: none;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
       z-index: 10;
     }
-    .selection-handle-nw { top: -6px; left: -6px; cursor: nwse-resize; }
-    .selection-handle-ne { top: -6px; right: -6px; cursor: nesw-resize; }
-    .selection-handle-se { bottom: -6px; right: -6px; cursor: nwse-resize; }
-    .selection-handle-sw { bottom: -6px; left: -6px; cursor: nesw-resize; }
-    .selection-delete-btn {
+    .selection-handle-nw { top: -5px; left: -5px; cursor: nwse-resize; }
+    .selection-handle-ne { top: -5px; right: -5px; cursor: nesw-resize; }
+    .selection-handle-se { bottom: -5px; right: -5px; cursor: nwse-resize; }
+    .selection-handle-sw { bottom: -5px; left: -5px; cursor: nesw-resize; }
+    .selection-handle-n  { top: -5px; left: 50%; transform: translateX(-50%); cursor: ns-resize; }
+    .selection-handle-s  { bottom: -5px; left: 50%; transform: translateX(-50%); cursor: ns-resize; }
+    .selection-handle-w  { top: 50%; left: -5px; transform: translateY(-50%); cursor: ew-resize; }
+    .selection-handle-e  { top: 50%; right: -5px; transform: translateY(-50%); cursor: ew-resize; }
+    
+    /* 顶部 360° 旋转连杆与旋转手柄 */
+    .selection-rot-stem {
       position: absolute;
-      top: -12px;
-      right: -12px;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #ef4444;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: bold;
-      cursor: pointer;
-      pointer-events: auto;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-      border: 2px solid #ffffff;
-      transition: transform 0.15s ease, background-color 0.15s ease;
-      z-index: 12;
-      line-height: 1;
+      top: -24px;
+      left: 50%;
+      width: 1px;
+      height: 24px;
+      background: #2563eb;
+      pointer-events: none;
     }
-    .selection-delete-btn:hover {
-      transform: scale(1.15);
-      background: #dc2626;
+    .selection-rot-handle {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 12px;
+      background: #ffffff;
+      border: 2px solid #2563eb;
+      border-radius: 50%;
+      cursor: grab;
+      pointer-events: auto;
+      touch-action: none;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      z-index: 12;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .selection-rot-handle:hover {
+      transform: translateX(-50%) scale(1.25);
+      background: #eff6ff;
+    }
+    .selection-rot-handle:active {
+      cursor: grabbing;
     }
 
-    /* 白天明亮绘本模式 (Theme Light) */
+    /* 现代悬浮控制胶囊工具条 (淘汰廉价红叉与粗糙紫色边框) */
+    .selection-action-pill {
+      position: absolute;
+      bottom: -38px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+      padding: 3px 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      z-index: 20;
+      white-space: nowrap;
+      pointer-events: auto;
+    }
+    .selection-action-pill button {
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.15s ease;
+    }
+    .selection-action-pill button:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+    }
+    .selection-action-pill .btn-del:hover {
+      background: rgba(239, 68, 68, 0.85);
+      color: #ffffff;
+    }
+
+    
+    /* 🌟 核心功能动画演示 (Pure CSS / SVG Keyframes) */
+    @keyframes snapLineAnim {
+      0% { stroke-dashoffset: 160; opacity: 0.2; stroke: #94a3b8; }
+      40% { stroke-dashoffset: 0; opacity: 0.7; stroke: #94a3b8; }
+      55% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
+      70% { transform: scale(1.02); filter: drop-shadow(0 0 8px #38bdf8); stroke: #38bdf8; }
+      90% { stroke-dashoffset: 0; opacity: 1; stroke: #38bdf8; }
+      100% { stroke-dashoffset: 0; opacity: 0.8; stroke: #38bdf8; }
+    }
+    @keyframes penCursorAnim {
+      0% { transform: translate(12px, 50px); opacity: 0; }
+      10% { opacity: 1; }
+      40% { transform: translate(150px, 50px); opacity: 1; }
+      65% { transform: translate(150px, 50px); opacity: 1; }
+      75% { transform: translate(150px, 50px) scale(1.2); opacity: 0.6; }
+      100% { transform: translate(170px, 35px); opacity: 0; }
+    }
+    @keyframes rotateBoxAnim {
+      0% { transform: rotate(0deg); }
+      20% { transform: rotate(0deg); }
+      45% { transform: rotate(45deg); }
+      65% { transform: rotate(90deg); }
+      85% { transform: rotate(90deg); }
+      100% { transform: rotate(0deg); }
+    }
+    @keyframes comicSlideAnim {
+      0%, 28% { transform: translateX(0%); }
+      33%, 61% { transform: translateX(-33.333%); }
+      66%, 95% { transform: translateX(-66.666%); }
+      100% { transform: translateX(0%); }
+    }
+    @keyframes vectorPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+      50% { transform: scale(1.03); box-shadow: 0 0 20px 4px rgba(99, 102, 241, 0.6); }
+    }
+
+    /* 白天暖白高对比模式 (Theme Light - 柔和暖白，字迹清晰) */
     body.theme-light {
-      background-color: #fdf2f8 !important;
+      background-color: #faf8f5 !important;
       color: #0f172a !important;
     }
     body.theme-light #topNavbar {
-      background: rgba(255, 255, 255, 0.94) !important;
-      border-bottom-color: #fbcfe8 !important;
-      color: #0f172a !important;
+      background-color: rgba(255, 255, 255, 0.96) !important;
+      border-color: #e5e0d8 !important;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     }
     body.theme-light #topNavbar .text-white,
     body.theme-light #topNavbar .text-slate-200 {
       color: #0f172a !important;
     }
     body.theme-light #workbenchWrapper {
-      background: #fdf2f8 !important;
+      background-color: #f3f0e8 !important;
     }
     body.theme-light #leftSidebar {
-      background: rgba(255, 255, 255, 0.96) !important;
-      border-color: #fbcfe8 !important;
-      box-shadow: 0 12px 36px rgba(244, 63, 94, 0.08) !important;
+      background-color: rgba(255, 255, 255, 0.96) !important;
+      border-color: #e5e0d8 !important;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
     }
     body.theme-light #leftSidebar button {
-      color: #475569 !important;
+      color: #334155 !important;
     }
     body.theme-light #leftSidebar button:hover {
-      background: #fff1f2 !important;
-      color: #e11d48 !important;
+      background-color: #f1ede4 !important;
+      color: #0f172a !important;
     }
     body.theme-light #leftSidebar .tool-btn-active {
-      background: #e11d48 !important;
+      background: linear-gradient(135deg, #f43f5e, #fb7185) !important;
       color: #ffffff !important;
-      box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3) !important;
     }
     body.theme-light #zoomDock,
     body.theme-light #paletteFlyout,
-    body.theme-light #stampsMenu {
-      background: rgba(255, 255, 255, 0.97) !important;
-      border-color: #fbcfe8 !important;
+    body.theme-light #stampsMenu,
+    body.theme-light #pageManagerDock {
+      background-color: rgba(255, 255, 255, 0.96) !important;
+      border-color: #e5e0d8 !important;
       color: #1e293b !important;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
     }
-    body.theme-light #zoomDock button {
+    body.theme-light #zoomDock button,
+    body.theme-light #pageManagerDock button {
       color: #334155 !important;
     }
-    body.theme-light #zoomDock button:hover {
-      background: #fff1f2 !important;
+    body.theme-light #zoomDock button:hover,
+    body.theme-light #pageManagerDock button:hover {
+      background-color: #f1ede4 !important;
     }
     body.theme-light #ratioSelector,
     body.theme-light #paperSelector,
     body.theme-light #btnLangDropdown {
-      color: #1e293b !important;
-      background: transparent !important;
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
     }
     body.theme-light #langMenu {
-      background: #ffffff !important;
-      border-color: #fbcfe8 !important;
-      color: #1e293b !important;
-      box-shadow: 0 12px 28px rgba(0,0,0,0.12) !important;
+      background-color: #ffffff !important;
+      border-color: #e5e0d8 !important;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     }
     body.theme-light #langMenu button {
       color: #334155 !important;
     }
     body.theme-light #langMenu button:hover {
-      background: #ffe4e6 !important;
-      color: #e11d48 !important;
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
     }
     body.theme-light .bg-slate-800\/90,
     body.theme-light .bg-slate-800 {
-      background: #ffffff !important;
-      border-color: #fbcfe8 !important;
-      color: #1e293b !important;
+      background-color: #ffffff !important;
+      border-color: #e5e0d8 !important;
     }
     body.theme-light .bg-slate-900\/90,
     body.theme-light .bg-slate-900 {
-      background: #ffffff !important;
-      border-color: #fce7f3 !important;
-      color: #1e293b !important;
+      background-color: #ffffff !important;
+      border-color: #e5e0d8 !important;
     }
+    body.theme-light .bg-slate-900\/60,
     body.theme-light .bg-slate-900\/50,
     body.theme-light .bg-slate-900\/40 {
-      background: #ffffff !important;
-      border-color: #fce7f3 !important;
+      background-color: #ffffff !important;
+      border-color: #e5e0d8 !important;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
     }
     body.theme-light .text-slate-400 {
-      color: #64748b !important;
-    }
-    body.theme-light .text-slate-300 {
       color: #475569 !important;
     }
+    body.theme-light .text-slate-300 {
+      color: #334155 !important;
+    }
+    body.theme-light .text-white {
+      color: #0f172a !important;
+    }
+    body.theme-light #seoArticleSection h2,
+    body.theme-light #seoArticleSection h3,
+    body.theme-light #seoArticleSection summary span {
+      color: #0f172a !important;
+    }
+    body.theme-light #seoArticleSection p,
+    body.theme-light #seoArticleSection li {
+      color: #334155 !important;
+    }
     body.theme-light footer {
-      background: #fff1f2 !important;
-      border-top-color: #fbcfe8 !important;
-      color: #64748b !important;
+      background-color: #f5f1ea !important;
+      border-color: #e5e0d8 !important;
     }
   </style>
 </head>
@@ -349,14 +459,31 @@
     <div class="flex items-center gap-2 overflow-x-auto py-1">
       <div class="flex items-center gap-1 bg-slate-800/90 border border-slate-700/80 rounded-xl px-2 py-1 flex-shrink-0">
         <span class="text-[11px] text-slate-400 font-medium">📐 <span class="hidden md:inline" data-i18n="lbl_ratio">画幅</span>:</span>
-        <select id="ratioSelector" class="bg-transparent text-slate-200 text-xs outline-none cursor-pointer">
-          <option value="free" selected>♾️ 自适应满屏 (Responsive)</option>
-          <option value="a4_l">📄 A4 横向画本 (Landscape 297×210)</option>
-          <option value="a4_p">📄 A4 纵向画纸 (Portrait 210×297)</option>
-          <option value="4_3">📱 4:3 儿童平板 (Tablet)</option>
-          <option value="16_9">💻 16:9 动画宽屏 (Presentation)</option>
-          <option value="1_1">🔲 1:1 正方形卡片 (Square)</option>
-          <option value="9_16">📱 9:16 手机长画 (Mobile)</option>
+        <select id="ratioSelector" class="bg-transparent text-slate-200 text-xs outline-none cursor-pointer font-medium max-w-[160px] sm:max-w-[200px]">
+          <optgroup label="📄 办公学习与作业试卷 (Homework & Docs)" class="bg-slate-900 text-slate-200">
+            <option value="a4_p">📄 A4 纵向 (标准作业/试卷 210×297)</option>
+            <option value="a4_l">📄 A4 横向 (横版教案/讲义 297×210)</option>
+            <option value="a3_l">📄 A3 跨页大版 (试卷/板书 420×297)</option>
+            <option value="letter_p">📄 US Letter (美标通用 8.5×11 in)</option>
+          </optgroup>
+          <optgroup label="🎨 漫画分镜与创作 (Manga & Comics)" class="bg-slate-900 text-slate-200">
+            <option value="manga_b5">🎨 日漫标准 B5 (投稿/同人 182×257)</option>
+            <option value="webtoon">🎨 垂直长条漫 (Webtoon 9:20 长卷)</option>
+            <option value="comic_4koma">🎨 四格漫画分镜 (4-Koma 1:2 连环)</option>
+          </optgroup>
+          <optgroup label="💻 演讲汇报与屏幕 (Presentation & Screen)" class="bg-slate-900 text-slate-200">
+            <option value="16_9">💻 16:9 宽屏演示 (PPT / Keynote)</option>
+            <option value="4_3">💻 4:3 经典课件 (iPad / 教学大屏)</option>
+            <option value="16_10">💻 16:10 商务全屏 (MacBook 笔记本)</option>
+          </optgroup>
+          <optgroup label="📱 移动自媒体与社交 (Social & Mobile)" class="bg-slate-900 text-slate-200">
+            <option value="1_1">📱 1:1 社交方形 (小红书/IG 配图)</option>
+            <option value="9_16">📱 9:16 手机竖屏 (Shorts / 海报)</option>
+            <option value="3_4">📱 3:4 小红书竖版 (精选封面)</option>
+          </optgroup>
+          <optgroup label="♾️ 自由无限模式 (Freeform)" class="bg-slate-900 text-slate-200">
+            <option value="free" selected>♾️ 自适应无界画板 (Responsive)</option>
+          </optgroup>
         </select>
       </div>
 
@@ -414,44 +541,55 @@
       <span>✕</span> <span data-i18n="exit_fullscreen">退出全屏</span>
     </button>
 
-    <!-- 左侧专业悬浮工具坞 -->
-    <aside id="leftSidebar" class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-1.5 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 p-1.5 rounded-2xl shadow-2xl transition-all">
-      <!-- 0. 鼠标选择与调整 (Select - V) -->
-      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" data-tool="select" title="↖️ 鼠标选择与调整 (快捷键 V，点选图片/文字可拖动、四角缩放或删除)" data-i18n-title="tip_select">↖️</button>
-      <!-- 1. 水彩软笔 -->
-      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition tool-btn-active" data-tool="brush" title="水彩毛笔 (色彩饱满柔软，停顿吸附标准几何)" data-i18n-title="tip_brush">🖌️</button>
-      <!-- 2. 炫彩蜡笔 -->
-      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" data-tool="crayon" title="彩色蜡笔 (厚重涂鸦质感)" data-i18n-title="tip_crayon">🖍️</button>
-      <!-- 3. 喷雾彩绘 -->
-      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" data-tool="spray" title="七彩喷枪 (星星喷雾)" data-i18n-title="tip_spray">💨</button>
-      <!-- 4. 自由打字工具 (Text Tool - T) -->
-      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" data-tool="text" title="🔤 创意文字打字 (快捷键 T，点击画布输入)" data-i18n-title="tip_text">🔤</button>
-      <!-- 5. ⚡ 一笔整擦 -->
-      <button class="tool-btn p-2 rounded-xl text-amber-300 hover:bg-amber-500/20 text-xs transition" data-tool="eraser" title="⚡ 一笔整擦 (碰一下笔画立即擦除整笔)" data-i18n-title="tip_eraser">⚡</button>
-      <!-- 6. ⭕ 套索选择与移动 -->
-      <button class="tool-btn p-2 rounded-xl text-pink-300 hover:bg-pink-500/20 text-xs transition" data-tool="lasso" title="⭕ 套索圈选与平移 (画个圈圈住涂鸦整块移走)" data-i18n-title="tip_lasso">⭕</button>
-      <!-- 7. 插入/粘贴图片 (支持剪贴板 Ctrl+V) -->
-      <button id="btnInsertImage" class="p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" title="🖼️ 导入卡通底图/填色画，支持 Ctrl+V 粘贴" data-i18n-title="tip_image">🖼️</button>
+    <!-- 左侧专业悬浮工具坞 (Figma / Apple 顶尖矢量图标体系) -->
+    <aside id="leftSidebar" class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-1 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 p-1.5 rounded-2xl shadow-2xl transition-all max-h-[88vh] overflow-y-auto">
+      <!-- 0. 鼠标选择 -->
+      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition flex items-center justify-center" data-tool="select" title="↖️ 鼠标选择与调整 (快捷键 V)" data-i18n-title="tip_select"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 3 7 18 3-7 7-3L3 3z"/><path d="m13 13 6 6"/></svg></button>
+      <!-- 1. ✋ 画板抓手自由拖动 (Hand Pan Tool - H) -->
+      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition flex items-center justify-center" data-tool="hand" data-i18n-title="tip_hand" title="✋ 画板抓手平移 (快捷键 H / 任意工具下长按空格键拖动，自由拖动画板到任意位置)">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+      </button>
+      <!-- 1. 钢笔 -->
+      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition tool-btn-active flex items-center justify-center" data-tool="pen" title="🖋️ 钢笔 (动态笔锋)" data-i18n-title="tip_pen"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18"/><path d="M2 2l7.5 7.5"/><circle cx="11" cy="11" r="1.5"/></svg></button>
+      <!-- 2. 圆珠笔 -->
+      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition flex items-center justify-center" data-tool="ballpoint" title="🖊️ 圆珠笔 (均匀笔记)" data-i18n-title="tip_ballpoint"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/><path d="m15 5 4 4"/></svg></button>
+      <!-- 3. 铅笔 -->
+      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition flex items-center justify-center" data-tool="pencil" title="✏️ 铅笔 (微米素描)" data-i18n-title="tip_pencil"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2l4 4-14 14H4v-4L18 2z"/><path d="M14 6l4 4"/></svg></button>
+      <!-- 4. 水彩软笔 -->
+      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition flex items-center justify-center" data-tool="brush" title="🖌️ 水彩毛笔 (色彩饱满柔软)" data-i18n-title="tip_brush"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.37 2.63 14 7l-1.5-1.5 4.37-4.37a2.12 2.12 0 1 1 3 3z"/><path d="M9 12 2.5 18.5a3.54 3.54 0 0 0 5 5L14 17"/><path d="m13 8 3 3"/></svg></button>
+      <!-- 5. 炫彩蜡笔 -->
+      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition flex items-center justify-center" data-tool="crayon" title="🖍️ 蜡笔油画棒 (油蜡涂鸦)" data-i18n-title="tip_crayon"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0z"/><path d="m5 2 5 5"/><path d="M2 18v4h4"/></svg></button>
+      <!-- 6. 荧光笔 -->
+      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition flex items-center justify-center" data-tool="highlighter" title="🪄 荧光重点笔 (半透高光)" data-i18n-title="tip_highlighter"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14 12-8.5 8.5a2.12 2.12 0 1 1-3-3L11 9"/><path d="M16 16l4-4"/><path d="m18 8 2 2"/><path d="m14 6 4 4"/></svg></button>
+      <!-- 7. 七彩喷枪 -->
+      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition flex items-center justify-center" data-tool="spray" title="💨 七彩喷枪 (星星喷雾)" data-i18n-title="tip_spray"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h6v4H8z"/><path d="M11 6v4"/><path d="M5 10h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z"/><circle cx="18" cy="4" r="1"/><circle cx="21" cy="7" r="1"/><circle cx="20" cy="1" r="1"/></svg></button>
+      <!-- 8. 自由打字 -->
+      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition flex items-center justify-center" data-tool="text" title="🔤 创意文字打字 (快捷键 T)" data-i18n-title="tip_text"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg></button>
+      <!-- 9. ⚡ 一笔整擦 -->
+      <button class="tool-btn p-2 rounded-xl text-amber-300 hover:bg-amber-500/20 text-xs transition flex items-center justify-center" data-tool="eraser" title="⚡ 一笔整擦" data-i18n-title="tip_eraser"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button>
+      <!-- 10. ⭕ 套索选择 -->
+      <button class="tool-btn p-2 rounded-xl text-pink-300 hover:bg-pink-500/20 text-xs transition flex items-center justify-center" data-tool="lasso" title="⭕ 套索圈选与平移" data-i18n-title="tip_lasso"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 22a5 5 0 0 1-2-4"/><path d="M3.3 14A6.8 6.8 0 0 1 2 10c0-4.4 4.5-8 10-8s10 3.6 10 8-4.5 8-10 8a12 12 0 0 1-5-1"/><circle cx="5" cy="18" r="2"/></svg></button>
+      <!-- 11. 插入图片 (Figma 现代相框) -->
+      <button id="btnInsertImage" class="p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition flex items-center justify-center" title="🖼️ 导入卡通底图，支持 Ctrl+V 粘贴" data-i18n-title="tip_image"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="4" ry="4"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></button>
       <input type="file" id="imageFileInput" accept="image/*" class="hidden" />
 
       <div class="w-6 h-px bg-slate-700 my-0.5"></div>
 
-      <!-- 8. 趣味印章菜单 -->
-      <button id="btnToggleStamps" class="p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" title="盖卡通贴纸印章 (恐龙/飞船/彩虹)" data-i18n-title="tip_stamps">🦖</button>
-      <!-- 9. 激光指示 -->
-      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" data-tool="laser" title="小星星激光笔 (点哪闪哪)" data-i18n-title="tip_laser">✨</button>
+      <!-- 12. 贴纸印章 -->
+      <button id="btnToggleStamps" class="p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition flex items-center justify-center" title="盖卡通贴纸印章" data-i18n-title="tip_stamps"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+      <!-- 13. 激光指示 -->
+      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition flex items-center justify-center" data-tool="laser" title="小星星激光笔" data-i18n-title="tip_laser"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 4-2 2m0 0-2 2m2-2 2 2m-2-2-2-2"/><path d="m17 7-9.5 9.5a2.12 2.12 0 0 0 3 3L20 10"/><path d="m19 2 2 2"/><path d="m22 7-2-2"/></svg></button>
 
       <div class="w-6 h-px bg-slate-700 my-0.5"></div>
 
-      <!-- 10. 调色面板 -->
-      <button id="btnTogglePalette" class="relative p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" title="画笔色彩与粗细调节" data-i18n-title="tip_palette">
-        <span id="activeColorDot" class="w-3.5 h-3.5 rounded-full block border border-white/60 bg-pink-500"></span>
+      <!-- 14. 调色面板 -->
+      <button id="btnTogglePalette" class="relative p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition flex items-center justify-center" title="画笔色彩与粗细调节" data-i18n-title="tip_palette">
+        <span id="activeColorDot" class="w-4 h-4 rounded-full block border border-white/60 bg-pink-500 shadow-sm"></span>
       </button>
-
-      <!-- 11. 撤销 -->
-      <button id="btnUndo" class="p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" title="撤销 (Ctrl+Z，移动端双指轻敲)" data-i18n-title="tip_undo">↩️</button>
-      <!-- 12. 清屏 -->
-      <button id="btnClearAll" class="p-2 rounded-xl text-rose-400 hover:bg-rose-950/60 text-xs transition" title="🗑️ 清空画纸重新画" data-i18n-title="tip_clear">🗑️</button>
+      <!-- 15. 撤销 -->
+      <button id="btnUndo" class="p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition flex items-center justify-center" title="撤销 (Ctrl+Z)" data-i18n-title="tip_undo"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
+      <!-- 16. 清屏 -->
+      <button id="btnClearAll" class="p-2 rounded-xl text-rose-400 hover:bg-rose-950/60 text-xs transition flex items-center justify-center" title="🗑️ 清空画纸重新画" data-i18n-title="tip_clear"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
     </aside>
 
     <!-- 卡通印章弹窗 -->
@@ -496,6 +634,18 @@
       <button id="btnZoomFit" class="px-1.5 py-0.5 hover:bg-slate-800 rounded-lg text-[11px]" title="适应居中" data-i18n-title="tip_zoom_fit">📐 <span data-i18n="fit">适中</span></button>
     </div>
 
+        <!-- 漫画分镜与无限纸张多页管理器 (Page Manager Dock) -->
+    <div id="pageManagerDock" class="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow-xl text-xs text-slate-200">
+      <button id="btnPrevPage" class="p-1 hover:bg-slate-800 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition" title="上一页 (Page Up)">◀</button>
+      <span id="pageIndicator" class="font-mono text-xs px-2 font-semibold text-rose-400">第 1 / 1 页</span>
+      <button id="btnNextPage" class="p-1 hover:bg-slate-800 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition" title="下一页 (Page Down)">▶</button>
+      <span class="text-slate-600">|</span>
+      <button id="btnAddPage" class="flex items-center gap-1 px-2 py-0.5 bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 border border-rose-500/40 rounded-lg transition" title="新建绘本页 / 漫画下一页">
+        <span>➕</span> <span data-i18n="add_page">加页</span>
+      </button>
+      <button id="btnDeletePage" class="p-1 hover:bg-rose-950/60 text-rose-400 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition" title="删除当前页">🗑️</button>
+    </div>
+
     <!-- 真实护眼米黄纸张卡片 -->
     <div id="canvasCard" class="relative rounded-2xl shadow-2xl ring-1 ring-slate-800 overflow-hidden flex items-center justify-center transition-transform bg-[#fffdf2] origin-center">
       <canvas id="mainCanvas"></canvas>
@@ -519,53 +669,271 @@
     </div>
   </section>
 
-  <!-- ================= 4. SEO 教程、特性亮点与常见问答 ================= -->
+  <!-- ================= 4. SEO 教程、动画演示与 AI Agent 协同指南 ================= -->
   <article id="seoArticleSection" class="w-full max-w-5xl mx-auto px-4 py-8 space-y-12">
-    <section>
-      <div class="text-center max-w-2xl mx-auto mb-8">
-        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">为孩子与幼教启蒙设计的纯净在线画板</h2>
-        <p class="text-xs sm:text-sm text-slate-400 mt-2">保护儿童视力的暖黄纸张、无毒无味数字蜡笔与恐龙贴纸印章，支持 A4 打印与高清原画收藏。</p>
+    <!-- 标头介绍 -->
+    <div class="text-center max-w-3xl mx-auto space-y-3">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-semibold">
+        <span>⚡ 专为创作者、学生、职场人与 AI Agent 打造的下一代 Web 画板</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">极简直观，兼具工业级创作与分镜排版能力</h2>
+      <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+        告别冗重软件，支持 GoodNotes 同款智能几何吸附、Figma 360° 变换、无限多页漫画分镜、MacBook 压感笔触，以及与 Claude、Codex、Antigravity 等 AI Agent 的无缝矢量协作。
+      </p>
+    </div>
+
+    <!-- 🌟 核心功能动画演示 (Pure CSS / SVG Keyframes 动态交互展示区) -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <span>🎬</span> <span>核心功能动画演示 · Feature Demos</span>
+        </h3>
+        <span class="text-[11px] text-slate-500 font-mono">100% 浏览器客户端实时运算</span>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 space-y-2 hover:border-pink-500/40 transition">
-          <div class="w-9 h-9 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-lg">🖍️</div>
-          <h3 class="text-sm font-bold text-white">趣味炫彩蜡笔与喷雾</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">仿真蜡笔涂色纹理与梦幻喷雾颗粒，激发孩子天马行空的想象力与色彩感知力。</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- 动画 1: 智能吸附 -->
+        <div class="bg-slate-900/70 border border-slate-800/90 rounded-2xl p-4 space-y-3 hover:border-indigo-500/50 transition">
+          <div class="relative h-44 bg-slate-950/80 rounded-xl overflow-hidden border border-slate-800/60 flex items-center justify-center">
+            <svg class="w-full h-full" viewBox="0 0 240 140" fill="none">
+              <circle cx="60" cy="30" r="1" fill="#334155" /><circle cx="120" cy="30" r="1" fill="#334155" /><circle cx="180" cy="30" r="1" fill="#334155" />
+              <circle cx="60" cy="70" r="1" fill="#334155" /><circle cx="120" cy="70" r="1" fill="#334155" /><circle cx="180" cy="70" r="1" fill="#334155" />
+              <circle cx="60" cy="110" r="1" fill="#334155" /><circle cx="120" cy="110" r="1" fill="#334155" /><circle cx="180" cy="110" r="1" fill="#334155" />
+              <path d="M 30 70 Q 75 66, 120 72 T 210 70" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-dasharray="200" style="animation: snapLineAnim 3.8s ease-in-out infinite;" />
+              <g style="animation: penCursorAnim 3.8s ease-in-out infinite;">
+                <path d="M 0 0 L 6 18 L 18 6 Z" fill="#2563eb" stroke="#ffffff" stroke-width="1.5" />
+                <circle cx="0" cy="0" r="2" fill="#ef4444" />
+              </g>
+            </svg>
+            <div class="absolute bottom-2.5 left-3 px-2 py-0.5 rounded-md bg-slate-900/90 border border-slate-700/80 text-[10px] text-emerald-400 font-mono flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+              <span>停顿 0.4 秒 · 瞬间吸附为数学级正圆与完美直线</span>
+            </div>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+              <span>✨</span> <span>智能图形吸附 (Draw & Hold)</span>
+            </h4>
+            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+              随手画线、正圆、三角形或矩形，下笔画完后指尖停顿 0.4 秒，算法将自动秒级变形为极致工整的几何线稿。
+            </p>
+          </div>
         </div>
 
-        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 space-y-2 hover:border-amber-500/40 transition">
-          <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">⭕</div>
-          <h3 class="text-sm font-bold text-white">好玩的套索拖动魔法</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">画好的小汽车或小动物可以用套索圈起来，整只拖动开走，孩子玩得开心停不下来！</p>
+        <!-- 动画 2: Figma 360° 旋转与 8 控点 -->
+        <div class="bg-slate-900/70 border border-slate-800/90 rounded-2xl p-4 space-y-3 hover:border-indigo-500/50 transition">
+          <div class="relative h-44 bg-slate-950/80 rounded-xl overflow-hidden border border-slate-800/60 flex items-center justify-center">
+            <div class="relative w-28 h-24 border-1.5 border-blue-500 bg-blue-500/10 rounded flex items-center justify-center" style="animation: rotateBoxAnim 5.2s ease-in-out infinite; transform-origin: center center;">
+              <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-0.5 h-6 bg-blue-500"></div>
+              <div class="absolute -top-8 left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-white border-2 border-blue-500 shadow"></div>
+              <div class="absolute -top-1.5 -left-1.5 w-2.5 h-2.5 bg-white border border-blue-500"></div>
+              <div class="absolute -top-1.5 -right-1.5 w-2.5 h-2.5 bg-white border border-blue-500"></div>
+              <div class="absolute -bottom-1.5 -right-1.5 w-2.5 h-2.5 bg-white border border-blue-500"></div>
+              <div class="absolute -bottom-1.5 -left-1.5 w-2.5 h-2.5 bg-white border border-blue-500"></div>
+              <div class="text-center">
+                <div class="w-7 h-7 mx-auto rounded bg-gradient-to-tr from-indigo-500 to-pink-500 flex items-center justify-center text-white text-xs shadow">🎨</div>
+                <span class="text-[9px] font-bold text-slate-300 block mt-1">Photo.png</span>
+              </div>
+            </div>
+            <div class="absolute bottom-2.5 left-3 px-2 py-0.5 rounded-md bg-slate-900/90 border border-slate-700/80 text-[10px] text-blue-400 font-mono flex items-center gap-1.5">
+              <span>📐 360° 任意角度自由旋转 · 告别廉价红叉</span>
+            </div>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+              <span>🔄</span> <span>Figma 标杆级 360° 旋转与等比缩放</span>
+            </h4>
+            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+              配备 8 个工业级缩放变形手柄、顶部旋转圆球与悬浮操作胶囊，点选图片与文字即可 360° 自由旋转。
+            </p>
+          </div>
         </div>
 
-        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 space-y-2 hover:border-emerald-500/40 transition">
-          <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg">📄</div>
-          <h3 class="text-sm font-bold text-white">A4 装订打印与相册一键存</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">一键导出适合家庭打印机装订成册的 A4 PDF 或透明涂鸦 PNG，珍藏童年第一副画作。</p>
+        <!-- 动画 3: 漫画分镜多页翻阅与无限纸张 -->
+        <div class="bg-slate-900/70 border border-slate-800/90 rounded-2xl p-4 space-y-3 hover:border-indigo-500/50 transition">
+          <div class="relative h-44 bg-slate-950/80 rounded-xl overflow-hidden border border-slate-800/60 flex items-center justify-center">
+            <div class="flex w-[300%] h-32 items-center" style="animation: comicSlideAnim 6s ease-in-out infinite;">
+              <div class="w-full flex items-center justify-center">
+                <div class="w-36 h-28 bg-slate-900 border border-slate-700 rounded-lg p-2 shadow-xl space-y-1.5">
+                  <div class="flex justify-between items-center text-[9px] text-slate-400 font-mono">
+                    <span>PAGE 1 · 分镜草稿</span>
+                    <span class="text-indigo-400 font-bold">1/3</span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-1 h-16">
+                    <div class="border border-dashed border-slate-700 rounded flex items-center justify-center text-[8px] text-slate-500">远景镜头</div>
+                    <div class="border border-dashed border-slate-700 rounded flex items-center justify-center text-[8px] text-slate-500">主角特写</div>
+                  </div>
+                </div>
+              </div>
+              <div class="w-full flex items-center justify-center">
+                <div class="w-36 h-28 bg-slate-900 border border-slate-700 rounded-lg p-2 shadow-xl space-y-1.5">
+                  <div class="flex justify-between items-center text-[9px] text-slate-400 font-mono">
+                    <span>PAGE 2 · 线稿对白</span>
+                    <span class="text-indigo-400 font-bold">2/3</span>
+                  </div>
+                  <div class="border border-slate-700 rounded h-16 p-1 flex flex-col justify-between">
+                    <span class="text-[8px] text-emerald-400 font-semibold">💭 "分镜与台词完整就位"</span>
+                    <div class="w-full h-1 bg-indigo-500/40 rounded"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="w-full flex items-center justify-center">
+                <div class="w-36 h-28 bg-slate-900 border border-indigo-500/60 rounded-lg p-2 shadow-xl space-y-1.5">
+                  <div class="flex justify-between items-center text-[9px] text-indigo-300 font-mono">
+                    <span>PAGE 3 · 完稿输出</span>
+                    <span class="text-indigo-400 font-bold">3/3</span>
+                  </div>
+                  <div class="bg-indigo-950/40 rounded h-16 flex items-center justify-center text-[9px] text-indigo-200 font-bold">
+                    <span>📄 合成单份多页 PDF</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="absolute bottom-2.5 left-3 px-2 py-0.5 rounded-md bg-slate-900/90 border border-slate-700/80 text-[10px] text-rose-400 font-mono flex items-center gap-1.5">
+              <span>📚 纸张无限 · 自由加页与漫画分镜切换</span>
+            </div>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+              <span>📖</span> <span>无限纸张漫画分镜与多页图册系统</span>
+            </h4>
+            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+              随时「➕ 加页」，每一页拥有独立笔画与撤销栈。导出 PDF 时自动按序连贯装订为单份完整电子书。
+            </p>
+          </div>
+        </div>
+
+        <!-- 动画 4: 矢量 SVG 直通 Figma / Canva -->
+        <div class="bg-slate-900/70 border border-slate-800/90 rounded-2xl p-4 space-y-3 hover:border-indigo-500/50 transition">
+          <div class="relative h-44 bg-slate-950/80 rounded-xl overflow-hidden border border-slate-800/60 flex items-center justify-around px-4">
+            <div class="w-24 h-28 bg-slate-900 border border-slate-700 rounded-xl p-2 flex flex-col items-center justify-center gap-1.5 shadow">
+              <span class="text-xs">💼 白板手绘</span>
+              <div class="px-1.5 py-0.5 bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 rounded text-[9px] font-mono">SVG 矢量</div>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <span class="text-indigo-400 text-sm font-bold animate-pulse">➔</span>
+              <span class="text-[9px] text-slate-400 font-mono">1 键复制</span>
+            </div>
+            <div class="w-24 h-28 bg-gradient-to-b from-slate-900 to-indigo-950/50 border border-indigo-500/50 rounded-xl p-2 flex flex-col items-center justify-center gap-1.5 shadow" style="animation: vectorPulse 2.8s ease-in-out infinite;">
+              <div class="flex items-center gap-1">
+                <span class="text-xs">🎨</span>
+                <span class="text-[10px] font-bold text-white">Figma / Canva</span>
+              </div>
+              <span class="text-[9px] text-emerald-400 font-semibold">✓ 路径无损可编辑</span>
+            </div>
+            <div class="absolute bottom-2.5 left-3 px-2 py-0.5 rounded-md bg-slate-900/90 border border-slate-700/80 text-[10px] text-indigo-400 font-mono flex items-center gap-1.5">
+              <span>🚀 Ctrl+V 粘贴直接导入主流设计软件</span>
+            </div>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+              <span>⚡</span> <span>矢量 SVG 无缝直通 Figma / Canva / AI</span>
+            </h4>
+            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+              支持点击「复制矢量 SVG」后直接在 Canva、Figma、Illustrator 中按 Ctrl+V 粘贴，所有笔画均为原生标准贝塞尔曲线。
+            </p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- FAQ -->
+    <!-- 🤖 AI Agent 协同指南 -->
+    <section class="bg-gradient-to-r from-indigo-950/40 via-slate-900/80 to-purple-950/40 border border-indigo-500/30 rounded-2xl p-6 space-y-4">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-indigo-600/30 text-indigo-400 flex items-center justify-center text-base shadow">🤖</div>
+        <div>
+          <h3 class="text-base font-bold text-white">AI Agent 协同创作与自动化分镜指南 (Claude / Codex / Antigravity)</h3>
+          <p class="text-xs text-slate-400">如何与现代大模型智能体无缝协同，打造高效的自动化绘图、漫画分镜与学术作业工作流</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs pt-2">
+        <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl space-y-1.5">
+          <div class="font-bold text-indigo-300 flex items-center gap-1">
+            <span>1.</span> <span>Prompt 驱动 SVG 矢量生成</span>
+          </div>
+          <p class="text-slate-400 leading-relaxed text-[11px]">
+            向 Claude、ChatGPT 或 Antigravity 提示：“生成 4 格漫画分镜或流程图的 SVG 代码”。AI 将直接给出标准的几何线条与草稿代码。
+          </p>
+        </div>
+
+        <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl space-y-1.5">
+          <div class="font-bold text-emerald-300 flex items-center gap-1">
+            <span>2.</span> <span>剪贴板一秒上板与手绘修正</span>
+          </div>
+          <p class="text-slate-400 leading-relaxed text-[11px]">
+            复制代码或截图后，在本画板任意位置按 <kbd class="px-1 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 font-mono text-[10px]">Ctrl+V</kbd> 即可秒级导入，支持在 AI 画面上批注手绘修正。
+          </p>
+        </div>
+
+        <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl space-y-1.5">
+          <div class="font-bold text-amber-300 flex items-center gap-1">
+            <span>3.</span> <span>多模态视觉评测与多页交付</span>
+          </div>
+          <p class="text-slate-400 leading-relaxed text-[11px]">
+            导出为 A4 作业 PDF 或日漫 B5 分镜，发送给智能体进行作业批改、色彩推敲或分镜评审，形成完整的智能伙伴工作流。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 📖 FAQ 与使用指南 -->
     <section class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 space-y-4">
-      <h2 class="text-lg font-bold text-white flex items-center gap-2">❓ <span>常见问题与使用指南 (FAQ)</span></h2>
+      <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <span>❓</span> <span>使用指南与常见问题 (FAQ & Manual)</span>
+        </h3>
+        <span class="text-xs text-slate-500">点击问题可展开详细操作指南</span>
+      </div>
+
       <div class="space-y-3 text-xs">
-        <details class="group bg-slate-800/50 p-3.5 rounded-xl border border-slate-700/50 cursor-pointer">
-          <summary class="font-semibold text-slate-200 flex justify-between items-center">
-            <span>家长如何在 iPad 或手机上保存孩子的涂鸦？</span>
+        <details class="group bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 cursor-pointer" open>
+          <summary class="font-semibold text-slate-200 flex justify-between items-center text-sm">
+            <span>1. 为什么切换到黑板底色后，深色笔迹依然清晰可见？</span>
             <span class="group-open:rotate-180 transition-transform">▾</span>
           </summary>
-          <p class="text-slate-400 mt-2 leading-relaxed">点击右上角的「💾 导出」按钮后，会弹出手机原生存图界面，长按画面 1 秒选择「存储图像」就能直接存入相册并分享给家人。</p>
+          <div class="text-slate-300 mt-2.5 space-y-2 leading-relaxed text-xs">
+            <p>内置<strong>「智能底纹对比度保护引擎」</strong>：从浅色底切换到黑板底色时，系统自动检测暗色笔画与文字，转化为高清晰白粉笔色（#f8fafc），当前画笔也同步切白。</p>
+          </div>
         </details>
 
-        <details class="group bg-slate-800/50 p-3.5 rounded-xl border border-slate-700/50 cursor-pointer">
-          <summary class="font-semibold text-slate-200 flex justify-between items-center">
-            <span>是否有防误触模式？</span>
+        <details class="group bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 cursor-pointer">
+          <summary class="font-semibold text-slate-200 flex justify-between items-center text-sm">
+            <span>2. 都有哪些针对学生、教师、漫画家与职场人的专属画布尺寸？</span>
             <span class="group-open:rotate-180 transition-transform">▾</span>
           </summary>
-          <p class="text-slate-400 mt-2 leading-relaxed">页面针对儿童小手做了专门的单指绘制与手势防抖优化，点击「⛶ 全屏」按钮后可彻底屏蔽浏览器多余按钮，沉浸绘画不分心。</p>
+          <div class="text-slate-300 mt-2.5 space-y-2 leading-relaxed text-xs">
+            <p>顶部导航栏「📐 画幅」预置各大群体的标准规格：A4 纵向/横向 (打印试卷/作业)、A3 跨页大版、日漫标准 B5 (漫画投稿)、Webtoon 垂直长条漫、四格漫画、16:9 演示宽屏、iPad 4:3 等。</p>
+          </div>
+        </details>
+
+        <details class="group bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 cursor-pointer">
+          <summary class="font-semibold text-slate-200 flex justify-between items-center text-sm">
+            <span>3. 键盘快捷键与触控板手势秘籍</span>
+            <span class="group-open:rotate-180 transition-transform">▾</span>
+          </summary>
+          <div class="text-slate-300 mt-2.5 space-y-2 leading-relaxed text-xs">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+              <div class="p-2 bg-slate-900/60 rounded border border-slate-700/60"><kbd class="text-indigo-400 font-bold">V</kbd> 选择调整</div>
+              <div class="p-2 bg-slate-900/60 rounded border border-slate-700/60"><kbd class="text-indigo-400 font-bold">P</kbd> 画笔工具</div>
+              <div class="p-2 bg-slate-900/60 rounded border border-slate-700/60"><kbd class="text-indigo-400 font-bold">T</kbd> 文本打字</div>
+              <div class="p-2 bg-slate-900/60 rounded border border-slate-700/60"><kbd class="text-indigo-400 font-bold">E</kbd> 一笔整擦</div>
+              <div class="p-2 bg-slate-900/60 rounded border border-slate-700/60"><kbd class="text-indigo-400 font-bold">L</kbd> 套索移动</div>
+              <div class="p-2 bg-slate-900/60 rounded border border-slate-700/60"><kbd class="text-indigo-400 font-bold">Del</kbd> 删除选中</div>
+              <div class="p-2 bg-slate-900/60 rounded border border-slate-700/60"><kbd class="text-indigo-400 font-bold">Space+拖</kbd> 平移画布</div>
+              <div class="p-2 bg-slate-900/60 rounded border border-slate-700/60"><kbd class="text-indigo-400 font-bold">双指轻敲</kbd> 撤销手势</div>
+            </div>
+          </div>
+        </details>
+
+        <details class="group bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 cursor-pointer">
+          <summary class="font-semibold text-slate-200 flex justify-between items-center text-sm">
+            <span>4. EazyOPC Pro 会员包含哪些权益？是永久使用的吗？</span>
+            <span class="group-open:rotate-180 transition-transform">▾</span>
+          </summary>
+          <div class="text-slate-300 mt-2.5 space-y-1.5 leading-relaxed text-xs">
+            <p>单次支付 $4.99 USD 即可终身永久解锁 4K 超清、透明免抠图、Canva/Figma 矢量 SVG 及多页分镜 PDF 导出，无任何二次订阅收费。</p>
+          </div>
         </details>
       </div>
     </section>
@@ -782,6 +1150,12 @@
   <script>
     const TRANSLATIONS = {
       zh: {
+        tip_pen: '🖋️ 钢笔 (速度自适应动态笔锋)',
+        tip_ballpoint: '🖊️ 圆珠笔 (均匀顺滑)',
+        tip_pencil: '✏️ 铅笔 (细颗粒素描)',
+        tip_highlighter: '🪄 荧光重点笔 (几何高光填充)',
+        add_page: '加页',
+        confirm_delete_page: '确定要删除当前绘本画纸页吗？此操作无法撤销。',
         site_subtitle: '儿童趣味涂鸦与多彩蜡笔画板',
         lbl_ratio: '画幅', lbl_paper: '画纸', fullscreen: '全屏', exit_fullscreen: '退出全屏',
         export: '导出', export_title: '导出画作 · Export Center', export_subtitle: '选择输出文件格式与画质规格',
@@ -817,6 +1191,7 @@
         continue_free: '暂不解锁，继续免费使用',
         palette_title: '画笔颜色', size: '粗细', fit: '适中', theme_light: '白天', theme_dark: '夜间',
         tip_select: '↖️ 鼠标选择与调整 (快捷键 V，点选图片/文字可拖动、四角缩放或删除)',
+        tip_hand: '✋ 画板抓手平移 (快捷键 H，按住空格键也可拖动)',
         tip_brush: '水彩毛笔 (色彩饱满柔软，停顿吸附标准几何)',
         tip_crayon: '彩色蜡笔 (厚重涂鸦质感)',
         tip_spray: '七彩喷枪 (星星喷雾)',
@@ -849,6 +1224,12 @@
         }
       },
       en: {
+        tip_pen: '🖋️ Fountain Pen (Velocity-sensitive dynamic stroke)',
+        tip_ballpoint: '🖊️ Ballpoint Pen (Uniform clean notes)',
+        tip_pencil: '✏️ Pencil (Graphite sketching texture)',
+        tip_highlighter: '🪄 Highlighter (Semi-transparent overlay)',
+        add_page: 'Add Page',
+        confirm_delete_page: 'Are you sure you want to delete this drawing page?',
         site_subtitle: 'Kids Fun Doodle & Colorful Crayon Board',
         lbl_ratio: 'Ratio', lbl_paper: 'Paper', fullscreen: 'Fullscreen', exit_fullscreen: 'Exit Fullscreen',
         export: 'Export', export_title: 'Export Center', export_subtitle: 'Select output format & resolution specifications',
@@ -916,6 +1297,12 @@
         }
       },
       ja: {
+        tip_pen: '🖋️ 万年筆 (筆圧・速度適応)',
+        tip_ballpoint: '🖊️ ボールペン (均一な筆跡)',
+        tip_pencil: '✏️ 鉛筆 (繊細なテクスチャ)',
+        tip_highlighter: '🪄 蛍光ペン (半透明ハイライト)',
+        add_page: 'ページ追加',
+        confirm_delete_page: '現在のページを削除してもよろしいですか？',
         site_subtitle: '子どものお絵かき＆カラフルクレヨン画板',
         lbl_ratio: '比率', lbl_paper: '画用紙', fullscreen: '全画面', exit_fullscreen: '全画面終了',
         export: 'エクスポート', export_title: '保存センター', export_subtitle: '出力フォーマットと解像度を選択',
@@ -983,6 +1370,12 @@
         }
       },
       ko: {
+        tip_pen: '🖋️ 만년필 (속도 적응형 필압 스트로크)',
+        tip_ballpoint: '🖊️ 볼펜 (균일한 필기)',
+        tip_pencil: '✏️ 연필 (섬세한 스케치 질감)',
+        tip_highlighter: '🪄 형광펜 (반투명 강조)',
+        add_page: '페이지 추가',
+        confirm_delete_page: '현재 페이지를 삭제하시겠습니까?',
         site_subtitle: '어린이 창의 낙서 및 크레파스 스케치북',
         lbl_ratio: '비율', lbl_paper: '도화지', fullscreen: '전체화면', exit_fullscreen: '전체화면 종료',
         export: '내보내기', export_title: '내보내기 센터', export_subtitle: '출력 파일 형식 및 해상도 선택',
@@ -1050,6 +1443,12 @@
         }
       },
       de: {
+        tip_pen: '🖋️ Füllfederhalter (Geschwindigkeitsdynamische Linien)',
+        tip_ballpoint: '🖊️ Kugelschreiber (Gleichmäßige Linien)',
+        tip_pencil: '✏️ Bleistift (Feine Graphitstruktur)',
+        tip_highlighter: '🪄 Textmarker (Halbtransparenter Akzent)',
+        add_page: 'Seite hinzufügen',
+        confirm_delete_page: 'Möchten Sie diese Seite wirklich löschen?',
         site_subtitle: 'Kreatives Malen & Bunte Wachsmalstifte für Kinder',
         lbl_ratio: 'Format', lbl_paper: 'Papier', fullscreen: 'Vollbild', exit_fullscreen: 'Vollbild beenden',
         export: 'Exportieren', export_title: 'Export-Zentrum', export_subtitle: 'Ausgabeformat und Auflösung wählen',
@@ -1117,6 +1516,12 @@
         }
       },
       es: {
+        tip_pen: '🖋️ Pluma estilográfica (Trazo dinámico adaptable)',
+        tip_ballpoint: '🖊️ Bolígrafo (Líneas uniformes)',
+        tip_pencil: '✏️ Lápiz (Textura de grafito)',
+        tip_highlighter: '🪄 Resaltador (Resaltado semitransparente)',
+        add_page: 'Añadir página',
+        confirm_delete_page: '¿Seguro que deseas eliminar esta página?',
         site_subtitle: 'Pizarra Infantil de Dibujo y Crayones de Colores',
         lbl_ratio: 'Proporción', lbl_paper: 'Papel', fullscreen: 'Pantalla completa', exit_fullscreen: 'Salir',
         export: 'Exportar', export_title: 'Centro de exportación', export_subtitle: 'Seleccione el formato y resolución de salida',
@@ -1184,6 +1589,12 @@
         }
       },
       fr: {
+        tip_pen: '🖋️ Stylo plume (Trait dynamique adaptatif)',
+        tip_ballpoint: '🖊️ Stylo bille (Notes nettes)',
+        tip_pencil: '✏️ Crayon (Esquisse graphite)',
+        tip_highlighter: '🪄 Surligneur (Mise en valeur translucide)',
+        add_page: 'Ajouter page',
+        confirm_delete_page: 'Voulez-vous vraiment supprimer cette page ?',
         site_subtitle: 'Dessin d\x27Enfants & Tableau de Craies Colorées',
         lbl_ratio: 'Format', lbl_paper: 'Papier', fullscreen: 'Plein écran', exit_fullscreen: 'Quitter plein écran',
         export: 'Exporter', export_title: 'Centre d\x27exportation', export_subtitle: 'Choisissez le format et la résolution de sortie',
@@ -1254,15 +1665,15 @@
 
     const appState = {
       lang: 'zh',
-      tool: 'brush',      // 'select' | 'brush' | 'crayon' | 'spray' | 'text' | 'eraser' | 'lasso' | 'laser'
+      tool: 'pen',        // 'select' | 'pen' | 'ballpoint' | 'pencil' | 'brush' | 'crayon' | 'highlighter' | 'spray' | 'text' | 'eraser' | 'lasso' | 'laser'
       paper: 'ivory',
       ratio: 'free',
       currentColor: '#f43f5e',
       brushSize: 8,
       isPro: localStorage.getItem('eazyopc_pro_unlocked') === 'true',
       strokes: [],
-      texts: [],          // [{ id, text, x, y, size, color }]
-      images: [],         // [{ id, img, x, y, width, height }]
+      texts: [],          // [{ id, text, x, y, size, color, rotation }]
+      images: [],         // [{ id, img, x, y, width, height, rotation }]
       history: [],
       lassoPath: [],
       selectedStrokes: [],
@@ -1271,6 +1682,11 @@
       selectionBounds: null,
       isDraggingSelection: false,
       dragStartPos: { x: 0, y: 0 },
+      // 🌟 漫画多页与无限纸张管理 (Multi-Page Comic Book Engine)
+      pages: [
+        { id: Date.now(), strokes: [], texts: [], images: [], history: [], redoStack: [] }
+      ],
+      currentPageIndex: 0,
       // 缩放与平移状态 (Pan & Zoom)
       zoom: 1.0,
       panX: 0,
@@ -1293,6 +1709,114 @@
     let cssHeight = 600;
     let dpr = 1;
 
+    
+    // 🌓 智能底纹对比度保护系统 (Auto Contrast Protection)
+    function isDarkPaper(p) {
+      if (!p) return false;
+      return p === 'green_chalk' || p === 'black_chalk' || p === 'chalk_green' || p === 'chalk_black' || p === 'chalk_slate' || p.includes('black') || p.includes('chalk');
+    }
+
+    function hexToRgb(hex) {
+      if (!hex || typeof hex !== 'string') return null;
+      let c = hex.replace('#', '');
+      if (c.length === 3) c = c.split('').map(x => x + x).join('');
+      if (c.length !== 6) return null;
+      const num = parseInt(c, 16);
+      return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+    }
+
+    function isColorTooDark(hex) {
+      const rgb = hexToRgb(hex);
+      if (!rgb) return false;
+      const lum = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255;
+      return lum < 0.28;
+    }
+
+    function isColorTooLight(hex) {
+      const rgb = hexToRgb(hex);
+      if (!rgb) return false;
+      const lum = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255;
+      return lum > 0.82;
+    }
+
+    function adaptPaperContrast(prevPaper, newPaper) {
+      const wasDark = isDarkPaper(prevPaper);
+      const isNowDark = isDarkPaper(newPaper);
+      if (wasDark === isNowDark) return;
+
+      saveHistory();
+
+      if (!wasDark && isNowDark) {
+        const darkColors = new Set(['#000000', '#0f172a', '#18181b', '#1e293b', '#334155', '#475569', '#111827', '#020617', '#27272a']);
+        const convertItem = (item) => {
+          if (!item.color) return;
+          const c = item.color.toLowerCase();
+          if (darkColors.has(c) || isColorTooDark(c)) {
+            item.color = '#f8fafc';
+          }
+        };
+
+        for (const pg of (appState.pages || [])) {
+          for (const s of (pg.strokes || [])) convertItem(s);
+          for (const t of (pg.texts || [])) convertItem(t);
+        }
+        for (const s of appState.strokes) convertItem(s);
+        for (const t of appState.texts) convertItem(t);
+
+        if (darkColors.has(appState.currentColor.toLowerCase()) || isColorTooDark(appState.currentColor)) {
+          appState.currentColor = '#f8fafc';
+          const dot = document.getElementById('activeColorDot');
+          if (dot) dot.style.backgroundColor = '#f8fafc';
+        }
+      }
+
+      if (wasDark && !isNowDark) {
+        const whiteColors = new Set(['#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1']);
+        const convertItem = (item) => {
+          if (!item.color) return;
+          const c = item.color.toLowerCase();
+          if (whiteColors.has(c) || isColorTooLight(c)) {
+            item.color = '#0f172a';
+          }
+        };
+
+        for (const pg of (appState.pages || [])) {
+          for (const s of (pg.strokes || [])) convertItem(s);
+          for (const t of (pg.texts || [])) convertItem(t);
+        }
+        for (const s of appState.strokes) convertItem(s);
+        for (const t of appState.texts) convertItem(t);
+
+        if (whiteColors.has(appState.currentColor.toLowerCase()) || isColorTooLight(appState.currentColor)) {
+          appState.currentColor = '#0f172a';
+          const dot = document.getElementById('activeColorDot');
+          if (dot) dot.style.backgroundColor = '#0f172a';
+        }
+      }
+    }
+
+    function manualSmartInvert() {
+      saveHistory();
+      const isDark = isDarkPaper(appState.paper);
+      for (const s of appState.strokes) {
+        if (!s.color) continue;
+        if (isDark) {
+          if (isColorTooDark(s.color)) s.color = '#f8fafc';
+        } else {
+          if (isColorTooLight(s.color)) s.color = '#0f172a';
+        }
+      }
+      for (const t of appState.texts) {
+        if (!t.color) continue;
+        if (isDark) {
+          if (isColorTooDark(t.color)) t.color = '#f8fafc';
+        } else {
+          if (isColorTooLight(t.color)) t.color = '#0f172a';
+        }
+      }
+      redrawAllStrokes();
+    }
+
     function applyZoomAndPan() {
       canvasCard.style.transform = `translate(${appState.panX}px, ${appState.panY}px) scale(${appState.zoom})`;
       document.getElementById('btnZoomReset').innerText = `${Math.round(appState.zoom * 100)}%`;
@@ -1304,13 +1828,20 @@
       const maxW = Math.max(300, containerRect.width - (document.body.classList.contains('is-fullscreen') ? 0 : 32));
       const maxH = Math.max(300, containerRect.height - (document.body.classList.contains('is-fullscreen') ? 0 : 32));
 
-      let targetRatio = null;
-      if (appState.ratio === 'a4_l') targetRatio = 297 / 210;
-      else if (appState.ratio === 'a4_p') targetRatio = 210 / 297;
-      else if (appState.ratio === '4_3') targetRatio = 4 / 3;
+            let targetRatio = null;
+      if (appState.ratio === 'a4_p') targetRatio = 210 / 297;
+      else if (appState.ratio === 'a4_l') targetRatio = 297 / 210;
+      else if (appState.ratio === 'a3_l') targetRatio = 420 / 297;
+      else if (appState.ratio === 'letter_p') targetRatio = 8.5 / 11;
+      else if (appState.ratio === 'manga_b5') targetRatio = 182 / 257;
+      else if (appState.ratio === 'webtoon') targetRatio = 9 / 20;
+      else if (appState.ratio === 'comic_4koma') targetRatio = 1 / 2;
       else if (appState.ratio === '16_9') targetRatio = 16 / 9;
+      else if (appState.ratio === '16_10') targetRatio = 16 / 10;
+      else if (appState.ratio === '4_3') targetRatio = 4 / 3;
       else if (appState.ratio === '1_1') targetRatio = 1;
       else if (appState.ratio === '9_16') targetRatio = 9 / 16;
+      else if (appState.ratio === '3_4') targetRatio = 3 / 4;
 
       if (!targetRatio) {
         cssWidth = maxW;
@@ -1394,18 +1925,24 @@
       targetCtx.setTransform(1, 0, 0, 1, 0, 0);
       targetCtx.scale(scale, scale);
 
-      // 1. 渲染插入/粘贴的图片 (填色底图、卡通线稿或临摹照片)
+      // 1. 渲染插入/粘贴的图片 (支持 360° 旋转)
       for (const im of appState.images) {
         if (im.img && im.img.complete) {
-          targetCtx.drawImage(im.img, im.x, im.y, im.width, im.height);
+          targetCtx.save();
+          const cx = im.x + im.width / 2;
+          const cy = im.y + im.height / 2;
+          targetCtx.translate(cx, cy);
+          if (im.rotation) targetCtx.rotate(im.rotation);
+          targetCtx.drawImage(im.img, -im.width / 2, -im.height / 2, im.width, im.height);
+          targetCtx.restore();
         }
       }
 
-      // 2. 渲染手绘涂鸦笔触与印章
+      // 2. 渲染手绘涂鸦笔触与趣味印章 (7 种专业工程与商业画笔)
       for (const s of appState.strokes) {
         if (s.isStamp) {
           targetCtx.save();
-          targetCtx.font = `${s.size}px serif`;
+          targetCtx.font = `\${s.size}px serif`;
           targetCtx.textAlign = 'center';
           targetCtx.textBaseline = 'middle';
           targetCtx.fillText(s.stamp, s.x, s.y);
@@ -1416,15 +1953,62 @@
         if (!s.points || s.points.length === 0) continue;
         targetCtx.save();
 
-        targetCtx.strokeStyle = s.color;
-        targetCtx.fillStyle = s.color;
-        targetCtx.lineCap = 'round';
-        targetCtx.lineJoin = 'round';
-
-        if (s.tool === 'spray') {
-          targetCtx.globalAlpha = 0.25;
+        if (s.tool === 'highlighter') {
+          targetCtx.globalCompositeOperation = 'multiply';
+          targetCtx.strokeStyle = s.color;
+          targetCtx.globalAlpha = 0.35;
+          targetCtx.lineCap = 'square';
+          targetCtx.lineJoin = 'miter';
+          targetCtx.lineWidth = s.size * 3.6;
+        } else if (s.tool === 'spray') {
+          targetCtx.fillStyle = s.color;
+          targetCtx.globalAlpha = 0.45;
+          for (const pt of s.points) {
+            if (pt.sprayDots) {
+              for (const dot of pt.sprayDots) {
+                targetCtx.fillRect(pt.x + dot.dx, pt.y + dot.dy, dot.r, dot.r);
+              }
+            } else {
+              targetCtx.fillRect(pt.x, pt.y, 2, 2);
+            }
+          }
+          targetCtx.restore();
+          continue;
+        } else if (s.tool === 'pencil') {
+          targetCtx.strokeStyle = s.color;
+          targetCtx.fillStyle = s.color;
+          targetCtx.globalAlpha = 0.78;
+          targetCtx.lineCap = 'round';
+          targetCtx.lineJoin = 'round';
+          targetCtx.lineWidth = Math.max(1, s.size * 0.75);
+        } else if (s.tool === 'brush') {
+          targetCtx.strokeStyle = s.color;
+          targetCtx.fillStyle = s.color;
+          targetCtx.globalAlpha = 0.9;
+          targetCtx.lineCap = 'round';
+          targetCtx.lineJoin = 'round';
+          targetCtx.lineWidth = s.size * 1.3;
         } else if (s.tool === 'crayon') {
+          targetCtx.strokeStyle = s.color;
+          targetCtx.fillStyle = s.color;
           targetCtx.globalAlpha = 0.85;
+          targetCtx.lineCap = 'round';
+          targetCtx.lineJoin = 'round';
+          targetCtx.lineWidth = s.size * 1.15;
+        } else if (s.tool === 'ballpoint') {
+          targetCtx.strokeStyle = s.color;
+          targetCtx.fillStyle = s.color;
+          targetCtx.globalAlpha = 1.0;
+          targetCtx.lineCap = 'round';
+          targetCtx.lineJoin = 'round';
+          targetCtx.lineWidth = Math.max(1, s.size * 0.85);
+        } else {
+          // 钢笔细线 / 默认
+          targetCtx.strokeStyle = s.color;
+          targetCtx.fillStyle = s.color;
+          targetCtx.lineCap = 'round';
+          targetCtx.lineJoin = 'round';
+          targetCtx.lineWidth = s.size;
         }
 
         if (s.points.length === 1) {
@@ -1441,24 +2025,32 @@
             if (i === 1) targetCtx.moveTo(p1.x, p1.y);
             targetCtx.quadraticCurveTo(p1.x, p1.y, midX, midY);
           }
-          targetCtx.lineWidth = s.size;
           targetCtx.stroke();
         }
 
         targetCtx.restore();
       }
 
-      // 3. 渲染自由打字文本
+      // 3. 渲染自由创意打字文本 (支持 360° 旋转)
       for (const t of appState.texts) {
         targetCtx.save();
-        targetCtx.font = `bold ${t.size}px sans-serif`;
-        targetCtx.fillStyle = t.color;
-        targetCtx.fillText(t.text, t.x, t.y);
+        if (t.rotation) {
+          targetCtx.translate(t.x, t.y);
+          targetCtx.rotate(t.rotation);
+          targetCtx.font = `bold \${t.size}px sans-serif`;
+          targetCtx.fillStyle = t.color;
+          targetCtx.fillText(t.text, 0, 0);
+        } else {
+          targetCtx.font = `bold \${t.size}px sans-serif`;
+          targetCtx.fillStyle = t.color;
+          targetCtx.fillText(t.text, t.x, t.y);
+        }
         targetCtx.restore();
       }
 
       targetCtx.restore();
     }
+
 
     function createLaserBeam(x, y) {
       const dot = document.createElement('div');
@@ -1574,6 +2166,7 @@
     }
 
     // ⭕ 鼠标选择与调整 UI (包含平移、四角等比缩放手柄与删除徽章)
+    // ⭕ 鼠标选择与调整 UI (Figma 规范：8方向缩放、360°旋转杆与悬浮操作胶囊)
     function updateSelectionBoxUI() {
       selectionOverlay.innerHTML = '';
       if ((!appState.selectedStrokes || appState.selectedStrokes.length === 0) &&
@@ -1616,33 +2209,112 @@
 
       const pad = 6;
       minX -= pad; minY -= pad; maxX += pad; maxY += pad;
-      appState.selectionBounds = { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+      const boxW = maxX - minX;
+      const boxH = maxY - minY;
+      appState.selectionBounds = { x: minX, y: minY, width: boxW, height: boxH };
+
+      // 检测单选对象旋转角度
+      let activeItem = null;
+      let curRotation = 0;
+      if (appState.selectedImages.length === 1 && appState.selectedTexts.length === 0 && appState.selectedStrokes.length === 0) {
+        activeItem = appState.selectedImages[0];
+        curRotation = activeItem.rotation || 0;
+      } else if (appState.selectedTexts.length === 1 && appState.selectedImages.length === 0 && appState.selectedStrokes.length === 0) {
+        activeItem = appState.selectedTexts[0];
+        curRotation = activeItem.rotation || 0;
+      }
 
       const box = document.createElement('div');
-      box.className = 'selection-box rounded-lg';
+      box.className = 'selection-box rounded';
       box.style.left = `${minX}px`;
       box.style.top = `${minY}px`;
-      box.style.width = `${maxX - minX}px`;
-      box.style.height = `${maxY - minY}px`;
+      box.style.width = `${boxW}px`;
+      box.style.height = `${boxH}px`;
+      if (curRotation) {
+        box.style.transform = `rotate(${curRotation}rad)`;
+      }
 
       box.innerHTML = `
-        <div class="selection-handle selection-handle-nw" data-handle="nw" title="缩放"></div>
-        <div class="selection-handle selection-handle-ne" data-handle="ne" title="缩放"></div>
-        <div class="selection-handle selection-handle-se" data-handle="se" title="缩放"></div>
-        <div class="selection-handle selection-handle-sw" data-handle="sw" title="缩放"></div>
-        <button class="selection-delete-btn" title="删除 (Delete)">✕</button>
+        <!-- 360° 顶部旋转杆与旋转球手柄 (Figma 规范) -->
+        <div class="selection-rot-stem"></div>
+        <div class="selection-rot-handle" data-rot="true" title="按住拖拽 360° 自由旋转"></div>
+        
+        <!-- 8 方向工业级缩放变形手柄 -->
+        <div class="selection-handle selection-handle-nw" data-handle="nw" title="等比缩放"></div>
+        <div class="selection-handle selection-handle-n" data-handle="n" title="垂直拉伸"></div>
+        <div class="selection-handle selection-handle-ne" data-handle="ne" title="等比缩放"></div>
+        <div class="selection-handle selection-handle-e" data-handle="e" title="水平拉伸"></div>
+        <div class="selection-handle selection-handle-se" data-handle="se" title="等比缩放"></div>
+        <div class="selection-handle selection-handle-s" data-handle="s" title="垂直拉伸"></div>
+        <div class="selection-handle selection-handle-sw" data-handle="sw" title="等比缩放"></div>
+        <div class="selection-handle selection-handle-w" data-handle="w" title="水平拉伸"></div>
+
+        <!-- 现代浮动操作胶囊栏 (告别廉价红叉) -->
+        <div class="selection-action-pill">
+          <button class="btn-pill-rot-l" title="逆时针旋转 90°">⤾ -90°</button>
+          <button class="btn-pill-rot-r" title="顺时针旋转 90°">⤿ +90°</button>
+          <span style="color:#64748b; font-size:10px;">|</span>
+          <button class="btn-pill-copy" title="复制副本 (Duplicate)">📋 复制</button>
+          <span style="color:#64748b; font-size:10px;">|</span>
+          <button class="btn-pill-delete btn-del" title="删除 (Delete)">🗑️ 删除</button>
+        </div>
       `;
 
-      // ✕ 删除徽章
-      const delBtn = box.querySelector('.selection-delete-btn');
-      delBtn.onclick = (e) => {
+      // 绑定动作胶囊事件
+      const rotLBtn = box.querySelector('.btn-pill-rot-l');
+      const rotRBtn = box.querySelector('.btn-pill-rot-r');
+      const copyBtn = box.querySelector('.btn-pill-copy');
+      const delBtn = box.querySelector('.btn-pill-delete');
+
+      rotLBtn.onclick = (e) => { e.stopPropagation(); rotateSelectedItems(-Math.PI / 2); };
+      rotRBtn.onclick = (e) => { e.stopPropagation(); rotateSelectedItems(Math.PI / 2); };
+      copyBtn.onclick = (e) => { e.stopPropagation(); duplicateSelectedItems(); };
+      delBtn.onclick = (e) => { e.stopPropagation(); deleteSelectedItems(); };
+
+      // 🌟 360° 顶部旋转把手交互
+      const rotHandle = box.querySelector('.selection-rot-handle');
+      rotHandle.onpointerdown = (e) => {
         e.stopPropagation();
-        deleteSelectedItems();
+        e.preventDefault();
+        saveHistory();
+
+        const centerX = minX + boxW / 2;
+        const centerY = minY + boxH / 2;
+        const startPointer = getCanvasCoordinates(e);
+        const initialAngle = curRotation || 0;
+        const baseAngle = Math.atan2(startPointer.y - centerY, startPointer.x - centerX) + Math.PI / 2;
+
+        const onRotMove = (me) => {
+          me.preventDefault();
+          const curPointer = getCanvasCoordinates(me);
+          const currentAngle = Math.atan2(curPointer.y - centerY, curPointer.x - centerX) + Math.PI / 2;
+          const deltaAngle = currentAngle - baseAngle;
+          const newAngle = initialAngle + deltaAngle;
+
+          if (activeItem) {
+            activeItem.rotation = newAngle;
+          } else {
+            for (const im of (appState.selectedImages || [])) im.rotation = (im.rotation || 0) + deltaAngle;
+            for (const t of (appState.selectedTexts || [])) t.rotation = (t.rotation || 0) + deltaAngle;
+          }
+
+          box.style.transform = `rotate(${newAngle}rad)`;
+          redrawAllStrokes();
+        };
+
+        const onRotUp = () => {
+          window.removeEventListener('pointermove', onRotMove);
+          window.removeEventListener('pointerup', onRotUp);
+          updateSelectionBoxUI();
+        };
+
+        window.addEventListener('pointermove', onRotMove);
+        window.addEventListener('pointerup', onRotUp);
       };
 
       // 整体框拖拽（移动平移）
       box.onpointerdown = (e) => {
-        if (e.target.dataset.handle || e.target === delBtn) return;
+        if (e.target.dataset.handle || e.target.dataset.rot || e.target.closest('.selection-action-pill')) return;
         e.stopPropagation();
         e.preventDefault();
         saveHistory();
@@ -1658,9 +2330,9 @@
           for (const s of (appState.selectedStrokes || [])) {
             if (s.isStamp) {
               s.x += dx; s.y += dy;
-            } else {
-              for (const pt of (s.points || [])) { pt.x += dx; pt.y += dy; }
+              continue;
             }
+            for (const pt of s.points) { pt.x += dx; pt.y += dy; }
           }
           for (const t of (appState.selectedTexts || [])) {
             t.x += dx; t.y += dy;
@@ -1682,15 +2354,15 @@
         window.addEventListener('pointerup', onBoxUp);
       };
 
-      // 4 角手柄等比缩放
+      // 8 方向手柄缩放
       box.querySelectorAll('.selection-handle').forEach(handle => {
         handle.onpointerdown = (e) => {
           e.stopPropagation();
           e.preventDefault();
           saveHistory();
+
           const handleType = handle.dataset.handle;
           const startPos = getCanvasCoordinates(e);
-
           const snapImgs = (appState.selectedImages || []).map(im => ({ ref: im, x: im.x, y: im.y, w: im.width, h: im.height }));
           const snapTexts = (appState.selectedTexts || []).map(t => ({ ref: t, size: t.size }));
 
@@ -1698,36 +2370,49 @@
             me.preventDefault();
             const cur = getCanvasCoordinates(me);
             const dx = cur.x - startPos.x;
+            const dy = cur.y - startPos.y;
 
             for (const item of snapImgs) {
               const ratio = item.h / item.w;
               if (handleType === 'se') {
-                const nw = Math.max(30, Math.round(item.w + dx));
+                const nw = Math.max(20, Math.round(item.w + dx));
                 item.ref.width = nw;
                 item.ref.height = Math.max(20, Math.round(nw * ratio));
               } else if (handleType === 'sw') {
-                const nw = Math.max(30, Math.round(item.w - dx));
+                const nw = Math.max(20, Math.round(item.w - dx));
                 item.ref.x = item.x + (item.w - nw);
                 item.ref.width = nw;
                 item.ref.height = Math.max(20, Math.round(nw * ratio));
               } else if (handleType === 'ne') {
-                const nw = Math.max(30, Math.round(item.w + dx));
+                const nw = Math.max(20, Math.round(item.w + dx));
                 const nh = Math.max(20, Math.round(nw * ratio));
                 item.ref.y = item.y + (item.h - nh);
                 item.ref.width = nw;
                 item.ref.height = nh;
               } else if (handleType === 'nw') {
-                const nw = Math.max(30, Math.round(item.w - dx));
+                const nw = Math.max(20, Math.round(item.w - dx));
                 const nh = Math.max(20, Math.round(nw * ratio));
                 item.ref.x = item.x + (item.w - nw);
                 item.ref.y = item.y + (item.h - nh);
                 item.ref.width = nw;
                 item.ref.height = nh;
+              } else if (handleType === 'e') {
+                item.ref.width = Math.max(20, Math.round(item.w + dx));
+              } else if (handleType === 'w') {
+                const nw = Math.max(20, Math.round(item.w - dx));
+                item.ref.x = item.x + (item.w - nw);
+                item.ref.width = nw;
+              } else if (handleType === 's') {
+                item.ref.height = Math.max(20, Math.round(item.h + dy));
+              } else if (handleType === 'n') {
+                const nh = Math.max(20, Math.round(item.h - dy));
+                item.ref.y = item.y + (item.h - nh);
+                item.ref.height = nh;
               }
             }
 
             for (const item of snapTexts) {
-              const delta = (handleType === 'se' || handleType === 'ne') ? dx : -dx;
+              const delta = (handleType === 'se' || handleType === 'ne' || handleType === 'e') ? dx : -dx;
               item.ref.size = Math.max(12, Math.min(120, Math.round(item.size + delta * 0.2)));
             }
 
@@ -1746,6 +2431,55 @@
       });
 
       selectionOverlay.appendChild(box);
+    }
+
+    function rotateSelectedItems(rad) {
+      saveHistory();
+      for (const im of (appState.selectedImages || [])) im.rotation = (im.rotation || 0) + rad;
+      for (const t of (appState.selectedTexts || [])) t.rotation = (t.rotation || 0) + rad;
+      redrawAllStrokes();
+      updateSelectionBoxUI();
+    }
+
+    function duplicateSelectedItems() {
+      if ((!appState.selectedStrokes || appState.selectedStrokes.length === 0) &&
+          (!appState.selectedTexts || appState.selectedTexts.length === 0) &&
+          (!appState.selectedImages || appState.selectedImages.length === 0)) return;
+      saveHistory();
+      const offset = 24;
+      const newStrokes = [];
+      for (const s of (appState.selectedStrokes || [])) {
+        if (s.isStamp) {
+          const clone = { ...s, id: Date.now() + Math.random(), x: s.x + offset, y: s.y + offset };
+          appState.strokes.push(clone);
+          newStrokes.push(clone);
+          continue;
+        }
+        const clone = {
+          ...s,
+          id: Date.now() + Math.random(),
+          points: s.points.map(pt => ({ ...pt, x: pt.x + offset, y: pt.y + offset }))
+        };
+        appState.strokes.push(clone);
+        newStrokes.push(clone);
+      }
+      const newTexts = [];
+      for (const t of (appState.selectedTexts || [])) {
+        const clone = { ...t, id: Date.now() + Math.random(), x: t.x + offset, y: t.y + offset };
+        appState.texts.push(clone);
+        newTexts.push(clone);
+      }
+      const newImages = [];
+      for (const im of (appState.selectedImages || [])) {
+        const clone = { ...im, id: Date.now() + Math.random(), x: im.x + offset, y: im.y + offset };
+        appState.images.push(clone);
+        newImages.push(clone);
+      }
+      appState.selectedStrokes = newStrokes;
+      appState.selectedTexts = newTexts;
+      appState.selectedImages = newImages;
+      redrawAllStrokes();
+      updateSelectionBoxUI();
     }
 
     function clearSelection() {
@@ -1776,6 +2510,7 @@
       clearSelection();
       redrawAllStrokes();
     }
+
 
     // 🔤 自由打字工具 (Text Tool)
     function createInlineTextInput(x, y) {
@@ -1828,8 +2563,13 @@
     }
 
     canvas.addEventListener('pointerdown', (e) => {
-      // 空格键长按抓手平移
-      if (e.spaceKey || appState.isSpaceDown || e.button === 1) {
+      // 抓手平移模式 (Hand tool、空格长按或鼠标中键)
+      if (appState.tool === 'hand' || e.spaceKey || appState.isSpaceDown || e.button === 1) {
+        appState.isPanning = true;
+        appState.panStart = { x: e.clientX - appState.panX, y: e.clientY - appState.panY };
+        canvasCard.style.cursor = 'grabbing';
+        return;
+      }
         appState.isPanning = true;
         appState.panStart = { x: e.clientX - appState.panX, y: e.clientY - appState.panY };
         return;
@@ -1843,7 +2583,10 @@
         return;
       }
 
-      if (appState.tool === 'select') {
+      if (appState.tool === 'hand') {
+        canvasCard.style.cursor = 'grab';
+        canvas.classList.remove('cursor-pen-nib');
+      } else if (appState.tool === 'select') {
         if (appState.selectionBounds &&
             pos.x >= appState.selectionBounds.x &&
             pos.x <= appState.selectionBounds.x + appState.selectionBounds.width &&
@@ -2050,6 +2793,7 @@
       clearTimeout(shapeHoldTimer);
       if (appState.isPanning) {
         appState.isPanning = false;
+        if (appState.tool === 'hand') canvasCard.style.cursor = 'grab';
         return;
       }
       if (appState.isDraggingSelection) {
@@ -2103,6 +2847,7 @@
         appState.selectedStrokes = [];
         appState.tool = 'select';
         updateToolButtonsUI();
+      updatePageManagerUI();
         redrawAllStrokes();
         updateSelectionBoxUI();
       };
@@ -2146,6 +2891,108 @@
         reader.readAsDataURL(e.target.files[0]);
       }
     };
+
+    
+    // 🌟 漫画分镜与无限纸张多页工程管理系统 (Comic Multi-Page System)
+    function saveCurrentPageState() {
+      if (!appState.pages) appState.pages = [];
+      if (!appState.pages[appState.currentPageIndex]) {
+        appState.pages[appState.currentPageIndex] = {
+          id: Date.now(),
+          strokes: [],
+          texts: [],
+          images: [],
+          history: [],
+          redoStack: []
+        };
+      }
+      const cur = appState.pages[appState.currentPageIndex];
+      cur.strokes = appState.strokes;
+      cur.texts = appState.texts;
+      cur.images = appState.images;
+      cur.history = appState.history;
+    }
+
+    function loadPage(index) {
+      if (!appState.pages || index < 0 || index >= appState.pages.length) return;
+      saveCurrentPageState();
+      appState.currentPageIndex = index;
+      const p = appState.pages[index];
+      appState.strokes = p.strokes || [];
+      appState.texts = p.texts || [];
+      appState.images = p.images || [];
+      appState.history = p.history || [];
+      clearSelection();
+      redrawAllStrokes();
+      updatePageManagerUI();
+    }
+
+    function addNewPage() {
+      saveCurrentPageState();
+      const newP = {
+        id: Date.now() + Math.random(),
+        strokes: [],
+        texts: [],
+        images: [],
+        history: [],
+        redoStack: []
+      };
+      appState.pages.push(newP);
+      appState.currentPageIndex = appState.pages.length - 1;
+      appState.strokes = [];
+      appState.texts = [];
+      appState.images = [];
+      appState.history = [];
+      clearSelection();
+      redrawAllStrokes();
+      updatePageManagerUI();
+    }
+
+    function deleteCurrentPage() {
+      if (appState.pages.length <= 1) {
+        // 只有一页时，清空当前页
+        document.getElementById('btnClearAll').click();
+        return;
+      }
+      const dict = TRANSLATIONS[appState.lang] || TRANSLATIONS.zh;
+      if (!confirm(dict.confirm_delete_page || '确定要删除当前绘本画纸页吗？此操作无法撤销。')) return;
+      appState.pages.splice(appState.currentPageIndex, 1);
+      if (appState.currentPageIndex >= appState.pages.length) {
+        appState.currentPageIndex = appState.pages.length - 1;
+      }
+      const p = appState.pages[appState.currentPageIndex];
+      appState.strokes = p.strokes || [];
+      appState.texts = p.texts || [];
+      appState.images = p.images || [];
+      appState.history = p.history || [];
+      clearSelection();
+      redrawAllStrokes();
+      updatePageManagerUI();
+    }
+
+    function updatePageManagerUI() {
+      const total = appState.pages.length;
+      const cur = appState.currentPageIndex + 1;
+      const indicator = document.getElementById('pageIndicator');
+      if (indicator) {
+        indicator.innerText = `第 ${cur} / ${total} 页`;
+      }
+      const btnPrev = document.getElementById('btnPrevPage');
+      const btnNext = document.getElementById('btnNextPage');
+      const btnDel = document.getElementById('btnDeletePage');
+      if (btnPrev) btnPrev.disabled = (appState.currentPageIndex === 0);
+      if (btnNext) btnNext.disabled = (appState.currentPageIndex === total - 1);
+      if (btnDel) btnDel.disabled = (total <= 1);
+    }
+
+    document.getElementById('btnPrevPage').onclick = () => {
+      if (appState.currentPageIndex > 0) loadPage(appState.currentPageIndex - 1);
+    };
+    document.getElementById('btnNextPage').onclick = () => {
+      if (appState.currentPageIndex < appState.pages.length - 1) loadPage(appState.currentPageIndex + 1);
+    };
+    document.getElementById('btnAddPage').onclick = addNewPage;
+    document.getElementById('btnDeletePage').onclick = deleteCurrentPage;
 
     // 缩放导航坞 (Pan & Zoom)
     document.getElementById('btnZoomIn').onclick = () => {
@@ -2205,6 +3052,8 @@
       if ((e.ctrlKey || e.metaKey) && key === 'z') {
         e.preventDefault();
         document.getElementById('btnUndo').click();
+      } else if (key === 'h') {
+        appState.tool = 'hand'; updateToolButtonsUI();
       } else if (key === 'v') {
         appState.tool = 'select'; updateToolButtonsUI();
       } else if (key === 'p') {
@@ -2456,15 +3305,32 @@
       const pdfW = pdf.internal.pageSize.getWidth();
       const pdfH = pdf.internal.pageSize.getHeight();
 
-      const offCanvas = document.createElement('canvas');
-      offCanvas.width = Math.round(cssWidth * 2);
-      offCanvas.height = Math.round(cssHeight * 2);
-      const offCtx = offCanvas.getContext('2d');
-      redrawAllStrokes(offCtx, 2, false);
+      // 保存当前画板页状态
+      saveCurrentPageState();
 
-      const imgData = offCanvas.toDataURL('image/jpeg', 0.95);
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
-      pdf.save(`KidsDraw-${Date.now()}.pdf`);
+      const total = (appState.pages && appState.pages.length > 0) ? appState.pages.length : 1;
+      const originalPageIndex = appState.currentPageIndex;
+
+      for (let i = 0; i < total; i++) {
+        if (i > 0) pdf.addPage();
+        const p = appState.pages[i];
+        appState.strokes = p.strokes || [];
+        appState.texts = p.texts || [];
+        appState.images = p.images || [];
+
+        const offCanvas = document.createElement('canvas');
+        offCanvas.width = Math.round(cssWidth * 2);
+        offCanvas.height = Math.round(cssHeight * 2);
+        const offCtx = offCanvas.getContext('2d');
+        redrawAllStrokes(offCtx, 2, false);
+
+        const imgData = offCanvas.toDataURL('image/jpeg', 0.95);
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
+      }
+
+      // 恢复原页面
+      loadPage(originalPageIndex);
+      pdf.save(`KidsDraw-Comic-${Date.now()}.pdf`);
     }
 
     async function handleFileDownloadOrShare(blob, filename, mimeType) {
@@ -2576,7 +3442,24 @@
         btn.classList.toggle('tool-btn-active', btn.dataset.tool === appState.tool);
       });
       if (appState.tool !== 'lasso' && appState.tool !== 'select') clearSelection();
-      canvasCard.style.cursor = appState.tool === 'select' ? 'default' : (appState.tool === 'lasso' ? 'crosshair' : 'crosshair');
+      
+      // 🌟 仿真真实落笔光标 (45度仿真笔尖)
+      if (appState.tool === 'select') {
+        canvasCard.style.cursor = 'default';
+        canvas.classList.remove('cursor-pen-nib');
+      } else if (appState.tool === 'lasso') {
+        canvasCard.style.cursor = 'crosshair';
+        canvas.classList.remove('cursor-pen-nib');
+      } else if (appState.tool === 'text') {
+        canvasCard.style.cursor = 'text';
+        canvas.classList.remove('cursor-pen-nib');
+      } else if (appState.tool === 'eraser') {
+        canvasCard.style.cursor = 'cell';
+        canvas.classList.remove('cursor-pen-nib');
+      } else {
+        canvasCard.style.cursor = 'none';
+        canvas.classList.add('cursor-pen-nib');
+      }
     }
 
     document.querySelectorAll('.tool-btn').forEach(btn => {
@@ -2591,7 +3474,10 @@
       resizeCanvas();
     };
     document.getElementById('paperSelector').onchange = (e) => {
-      appState.paper = e.target.value;
+      const prevPaper = appState.paper;
+      const newPaper = e.target.value;
+      adaptPaperContrast(prevPaper, newPaper);
+      appState.paper = newPaper;
       redrawAllStrokes();
     };
 
