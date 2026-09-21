@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kidsdraw.eazyopc.com/sitemap.xml
