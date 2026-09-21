@@ -280,33 +280,38 @@
     <!-- 左侧专业悬浮工具坞 -->
     <aside id="leftSidebar" class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-1.5 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 p-1.5 rounded-2xl shadow-2xl transition-all">
       <!-- 1. 水彩软笔 -->
-      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition tool-btn-active" data-tool="brush" title="水彩毛笔 (色彩饱满柔软)">🖌️</button>
+      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition tool-btn-active" data-tool="brush" title="水彩毛笔 (色彩饱满柔软，停顿吸附标准几何)">🖌️</button>
       <!-- 2. 炫彩蜡笔 -->
       <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" data-tool="crayon" title="彩色蜡笔 (厚重涂鸦质感)">🖍️</button>
       <!-- 3. 喷雾彩绘 -->
       <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" data-tool="spray" title="七彩喷枪 (星星喷雾)">💨</button>
-      <!-- 4. ⚡ 一笔整擦 -->
+      <!-- 4. 自由打字工具 (Text Tool - T) -->
+      <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" data-tool="text" title="🔤 创意文字打字 (快捷键 T，点击画布输入)">🔤</button>
+      <!-- 5. ⚡ 一笔整擦 -->
       <button class="tool-btn p-2 rounded-xl text-amber-300 hover:bg-amber-500/20 text-xs transition" data-tool="eraser" title="⚡ 一笔整擦 (碰一下笔画立即擦除整笔)">⚡</button>
-      <!-- 5. ⭕ 套索选择与移动 -->
+      <!-- 6. ⭕ 套索选择与移动 -->
       <button class="tool-btn p-2 rounded-xl text-pink-300 hover:bg-pink-500/20 text-xs transition" data-tool="lasso" title="⭕ 套索圈选与平移 (画个圈圈住涂鸦整块移走)">⭕</button>
+      <!-- 7. 插入/粘贴图片 (支持剪贴板 Ctrl+V) -->
+      <button id="btnInsertImage" class="p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" title="🖼️ 导入卡通底图/填色画，支持 Ctrl+V 粘贴">🖼️</button>
+      <input type="file" id="imageFileInput" accept="image/*" class="hidden" />
 
       <div class="w-6 h-px bg-slate-700 my-0.5"></div>
 
-      <!-- 6. 趣味印章菜单 -->
+      <!-- 8. 趣味印章菜单 -->
       <button id="btnToggleStamps" class="p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" title="盖卡通贴纸印章 (恐龙/飞船/彩虹)">🦖</button>
-      <!-- 7. 激光指示 -->
+      <!-- 9. 激光指示 -->
       <button class="tool-btn p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" data-tool="laser" title="小星星激光笔 (点哪闪哪)">✨</button>
 
       <div class="w-6 h-px bg-slate-700 my-0.5"></div>
 
-      <!-- 8. 调色面板 -->
+      <!-- 10. 调色面板 -->
       <button id="btnTogglePalette" class="relative p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" title="画笔色彩与粗细调节">
         <span id="activeColorDot" class="w-3.5 h-3.5 rounded-full block border border-white/60 bg-pink-500"></span>
       </button>
 
-      <!-- 9. 撤销 -->
-      <button id="btnUndo" class="p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" title="撤销 (Ctrl+Z)">↩️</button>
-      <!-- 10. 清屏 -->
+      <!-- 11. 撤销 -->
+      <button id="btnUndo" class="p-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs transition" title="撤销 (Ctrl+Z，移动端双指轻敲)">↩️</button>
+      <!-- 12. 清屏 -->
       <button id="btnClearAll" class="p-2 rounded-xl text-rose-400 hover:bg-rose-950/60 text-xs transition" title="🗑️ 清空画纸重新画">🗑️</button>
     </aside>
 
@@ -329,10 +334,10 @@
     </div>
 
     <!-- 悬浮调色板 -->
-    <div id="paletteFlyout" class="hidden absolute left-16 sm:left-20 top-1/2 -translate-y-1/2 z-40 bg-slate-900/95 border border-slate-700 backdrop-blur-md rounded-2xl p-3 shadow-2xl space-y-3 w-48 text-white">
+    <div id="paletteFlyout" class="hidden absolute left-16 sm:left-20 top-1/2 -translate-y-1/2 z-40 bg-slate-900/95 border border-slate-700 backdrop-blur-md rounded-2xl p-3 shadow-2xl space-y-3 w-52 text-white">
       <div>
         <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1.5" data-i18n="palette_title">画笔颜色</span>
-        <div id="paletteColors" class="grid grid-cols-6 gap-1.5"></div>
+        <div id="paletteColors" class="grid grid-cols-6 gap-1.5 items-center"></div>
       </div>
       <div>
         <div class="flex justify-between items-center text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">
@@ -343,10 +348,20 @@
       </div>
     </div>
 
+    <!-- 左下角画布缩放与导航坞 (Pan & Zoom Dock) -->
+    <div id="zoomDock" class="absolute bottom-4 left-4 z-30 flex items-center gap-1 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 px-2 py-1 rounded-xl shadow-xl text-xs text-slate-300">
+      <button id="btnZoomOut" class="w-6 h-6 flex items-center justify-center hover:bg-slate-800 rounded-lg font-bold" title="缩小 (Ctrl+滚轮)">−</button>
+      <button id="btnZoomReset" class="px-1.5 py-0.5 hover:bg-slate-800 rounded-lg font-mono text-[11px]" title="重置 100%">100%</button>
+      <button id="btnZoomIn" class="w-6 h-6 flex items-center justify-center hover:bg-slate-800 rounded-lg font-bold" title="放大 (Ctrl+滚轮)">+</button>
+      <span class="text-slate-600">|</span>
+      <button id="btnZoomFit" class="px-1.5 py-0.5 hover:bg-slate-800 rounded-lg text-[11px]" title="适应居中">📐 适中</button>
+    </div>
+
     <!-- 真实护眼米黄纸张卡片 -->
-    <div id="canvasCard" class="relative rounded-2xl shadow-2xl ring-1 ring-slate-800 overflow-hidden flex items-center justify-center transition-all bg-[#fffdf2]">
+    <div id="canvasCard" class="relative rounded-2xl shadow-2xl ring-1 ring-slate-800 overflow-hidden flex items-center justify-center transition-transform bg-[#fffdf2] origin-center">
       <canvas id="mainCanvas"></canvas>
       <div id="laserLayer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+      <div id="stickyLayer" class="absolute inset-0 pointer-events-none"></div>
       <div id="selectionOverlay" class="absolute inset-0 pointer-events-none"></div>
     </div>
   </main>
@@ -643,12 +658,22 @@
       brushSize: 8,
       isPro: localStorage.getItem('eazyopc_pro_unlocked') === 'true',
       strokes: [],
+      texts: [],          // [{ id, text, x, y, size, color }]
+      images: [],         // [{ id, img, x, y, width, height }]
       history: [],
       lassoPath: [],
       selectedStrokes: [],
+      selectedImages: [],
+      selectedTexts: [],
       selectionBounds: null,
       isDraggingSelection: false,
-      dragStartPos: { x: 0, y: 0 }
+      dragStartPos: { x: 0, y: 0 },
+      // 缩放与平移状态 (Pan & Zoom)
+      zoom: 1.0,
+      panX: 0,
+      panY: 0,
+      isPanning: false,
+      panStart: { x: 0, y: 0 }
     };
 
     const canvas = document.getElementById('mainCanvas');
@@ -656,6 +681,7 @@
     const canvasCard = document.getElementById('canvasCard');
     const workbenchWrapper = document.getElementById('workbenchWrapper');
     const laserLayer = document.getElementById('laserLayer');
+    const stickyLayer = document.getElementById('stickyLayer');
     const selectionOverlay = document.getElementById('selectionOverlay');
 
     const KIDS_PALETTE = ['#f43f5e', '#fbbf24', '#38bdf8', '#4ade80', '#a855f7', '#fb923c', '#ec4899', '#06b6d4', '#10b981', '#1e293b'];
@@ -663,6 +689,11 @@
     let cssWidth = 800;
     let cssHeight = 600;
     let dpr = 1;
+
+    function applyZoomAndPan() {
+      canvasCard.style.transform = `translate(${appState.panX}px, ${appState.panY}px) scale(${appState.zoom})`;
+      document.getElementById('btnZoomReset').innerText = `${Math.round(appState.zoom * 100)}%`;
+    }
 
     function resizeCanvas() {
       dpr = Math.min(window.devicePixelRatio || 1, 3);
@@ -702,6 +733,7 @@
       canvas.style.width = `${cssWidth}px`;
       canvas.style.height = `${cssHeight}px`;
 
+      applyZoomAndPan();
       redrawAllStrokes();
       updateSelectionBoxUI();
     }
@@ -759,6 +791,14 @@
       targetCtx.setTransform(1, 0, 0, 1, 0, 0);
       targetCtx.scale(scale, scale);
 
+      // 1. 渲染插入/粘贴的图片 (填色底图、卡通线稿或临摹照片)
+      for (const im of appState.images) {
+        if (im.img && im.img.complete) {
+          targetCtx.drawImage(im.img, im.x, im.y, im.width, im.height);
+        }
+      }
+
+      // 2. 渲染手绘涂鸦笔触与印章
       for (const s of appState.strokes) {
         if (s.isStamp) {
           targetCtx.save();
@@ -802,6 +842,15 @@
           targetCtx.stroke();
         }
 
+        targetCtx.restore();
+      }
+
+      // 3. 渲染自由打字文本
+      for (const t of appState.texts) {
+        targetCtx.save();
+        targetCtx.font = `bold ${t.size}px sans-serif`;
+        targetCtx.fillStyle = t.color;
+        targetCtx.fillText(t.text, t.x, t.y);
         targetCtx.restore();
       }
 
@@ -850,7 +899,11 @@
       const hitRadius = Math.max(24, appState.brushSize * 3);
       const initialCount = appState.strokes.length;
       appState.strokes = appState.strokes.filter(s => !isStrokeNearPoint(s, x, y, hitRadius));
-      if (appState.strokes.length < initialCount) {
+
+      const initialTextCount = appState.texts.length;
+      appState.texts = appState.texts.filter(t => Math.hypot(t.x - x, t.y - y) > hitRadius * 1.5);
+
+      if (appState.strokes.length < initialCount || appState.texts.length < initialTextCount) {
         redrawAllStrokes();
         return true;
       }
@@ -869,9 +922,59 @@
       return inside;
     }
 
+    // 🌟 GoodNotes 智能图形长按吸附引擎 (Draw & Hold: 帮助孩子一笔画正圆/直线)
+    let shapeHoldTimer = null;
+    let isShapeSnapped = false;
+
+    function checkAndSnapShape(stroke) {
+      if (!stroke || stroke.isStamp || !stroke.points || stroke.points.length < 5) return;
+      const pts = stroke.points;
+      const p0 = pts[0];
+      const pN = pts[pts.length - 1];
+      const straightDist = Math.hypot(pN.x - p0.x, pN.y - p0.y);
+      let totalLen = 0;
+      for (let i = 1; i < pts.length; i++) {
+        totalLen += Math.hypot(pts[i].x - pts[i-1].x, pts[i].y - pts[i-1].y);
+      }
+
+      // 1. 直线吸附识别
+      if (straightDist > 30 && straightDist / totalLen > 0.88) {
+        stroke.points = [p0, pN];
+        isShapeSnapped = true;
+        redrawAllStrokes();
+        return;
+      }
+
+      // 2. 闭合正圆/椭圆吸附识别
+      if (straightDist < Math.max(35, totalLen * 0.2)) {
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        for (const p of pts) {
+          if (p.x < minX) minX = p.x;
+          if (p.y < minY) minY = p.y;
+          if (p.x > maxX) maxX = p.x;
+          if (p.y > maxY) maxY = p.y;
+        }
+        const w = maxX - minX;
+        const h = maxY - minY;
+        if (w > 20 && h > 20) {
+          const cx = minX + w / 2;
+          const cy = minY + h / 2;
+          const ellipsePts = [];
+          for (let a = 0; a <= Math.PI * 2 + 0.1; a += Math.PI / 16) {
+            ellipsePts.push({ x: cx + Math.cos(a) * (w / 2), y: cy + Math.sin(a) * (h / 2) });
+          }
+          stroke.points = ellipsePts;
+          isShapeSnapped = true;
+          redrawAllStrokes();
+        }
+      }
+    }
+
     function updateSelectionBoxUI() {
       selectionOverlay.innerHTML = '';
-      if (!appState.selectedStrokes || appState.selectedStrokes.length === 0) {
+      if ((!appState.selectedStrokes || appState.selectedStrokes.length === 0) &&
+          (!appState.selectedTexts || appState.selectedTexts.length === 0) &&
+          (!appState.selectedImages || appState.selectedImages.length === 0)) {
         appState.selectionBounds = null;
         return;
       }
@@ -892,6 +995,18 @@
           if (pt.x > maxX) maxX = pt.x;
           if (pt.y > maxY) maxY = pt.y;
         }
+      }
+      for (const t of appState.selectedTexts) {
+        if (t.x < minX) minX = t.x;
+        if (t.y - t.size < minY) minY = t.y - t.size;
+        if (t.x + t.size * 3 > maxX) maxX = t.x + t.size * 3;
+        if (t.y > maxY) maxY = t.y;
+      }
+      for (const im of appState.selectedImages) {
+        if (im.x < minX) minX = im.x;
+        if (im.y < minY) minY = im.y;
+        if (im.x + im.width > maxX) maxX = im.x + im.width;
+        if (im.y + im.height > maxY) maxY = im.y + im.height;
       }
 
       const pad = 8;
@@ -915,24 +1030,77 @@
 
     function clearSelection() {
       appState.selectedStrokes = [];
+      appState.selectedTexts = [];
+      appState.selectedImages = [];
       appState.selectionBounds = null;
       selectionOverlay.innerHTML = '';
+    }
+
+    // 🔤 自由打字工具 (Text Tool)
+    function createInlineTextInput(x, y) {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = '输入可爱文字...';
+      const fontSize = Math.max(16, appState.brushSize * 3);
+      input.className = 'absolute z-30 bg-white/95 text-slate-900 px-2 py-1 rounded-xl border border-pink-500 shadow-xl outline-none text-xs font-bold';
+      input.style.left = `${x}px`;
+      input.style.top = `${y - 12}px`;
+      input.style.color = appState.currentColor;
+
+      stickyLayer.appendChild(input);
+      setTimeout(() => input.focus(), 50);
+
+      const finish = () => {
+        const val = input.value.trim();
+        if (val) {
+          saveHistory();
+          appState.texts.push({
+            id: Date.now(),
+            text: val,
+            x: x,
+            y: y + fontSize * 0.8,
+            size: fontSize,
+            color: appState.currentColor
+          });
+          redrawAllStrokes();
+        }
+        input.remove();
+      };
+
+      input.onkeydown = (e) => {
+        if (e.key === 'Enter') finish();
+      };
+      input.onblur = finish;
     }
 
     let isDrawing = false;
     let currentStroke = null;
 
     function getCanvasCoordinates(e) {
-      const rect = canvas.getBoundingClientRect();
+      const rect = canvasCard.getBoundingClientRect();
+      const scaleX = cssWidth / rect.width;
+      const scaleY = cssHeight / rect.height;
       return {
-        x: Math.max(0, Math.min(cssWidth, e.clientX - rect.left)),
-        y: Math.max(0, Math.min(cssHeight, e.clientY - rect.top))
+        x: Math.max(0, Math.min(cssWidth, (e.clientX - rect.left) * scaleX)),
+        y: Math.max(0, Math.min(cssHeight, (e.clientY - rect.top) * scaleY))
       };
     }
 
     canvas.addEventListener('pointerdown', (e) => {
+      // 空格键长按抓手平移
+      if (e.spaceKey || appState.isSpaceDown || e.button === 1) {
+        appState.isPanning = true;
+        appState.panStart = { x: e.clientX - appState.panX, y: e.clientY - appState.panY };
+        return;
+      }
+
       e.preventDefault();
       const pos = getCanvasCoordinates(e);
+
+      if (appState.tool === 'text') {
+        createInlineTextInput(pos.x, pos.y);
+        return;
+      }
 
       if (appState.tool === 'lasso') {
         if (appState.selectionBounds &&
@@ -967,6 +1135,7 @@
 
       saveHistory();
       isDrawing = true;
+      isShapeSnapped = false;
       const pressure = (e.pressure !== undefined && e.pressure > 0) ? e.pressure : 0.5;
       let strokeWidth = Number(appState.brushSize);
       if (appState.tool === 'brush') strokeWidth *= (0.3 + 1.4 * Math.pow(pressure, 1.2));
@@ -981,9 +1150,17 @@
         points: [pos]
       };
       appState.strokes.push(currentStroke);
+      clearTimeout(shapeHoldTimer);
     });
 
     canvas.addEventListener('pointermove', (e) => {
+      if (appState.isPanning) {
+        appState.panX = e.clientX - appState.panStart.x;
+        appState.panY = e.clientY - appState.panStart.y;
+        applyZoomAndPan();
+        return;
+      }
+
       e.preventDefault();
       const pos = getCanvasCoordinates(e);
 
@@ -999,6 +1176,12 @@
           for (const pt of s.points) {
             pt.x += dx; pt.y += dy;
           }
+        }
+        for (const t of appState.selectedTexts) {
+          t.x += dx; t.y += dy;
+        }
+        for (const im of appState.selectedImages) {
+          im.x += dx; im.y += dy;
         }
         redrawAllStrokes();
         updateSelectionBoxUI();
@@ -1037,7 +1220,7 @@
         return;
       }
 
-      if (currentStroke) {
+      if (currentStroke && !isShapeSnapped) {
         currentStroke.points.push(pos);
         ctx.save();
         ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1054,10 +1237,23 @@
         ctx.lineWidth = currentStroke.size;
         ctx.stroke();
         ctx.restore();
+
+        // 🌟 启动 GoodNotes 停顿 420ms 智能吸附计时器
+        clearTimeout(shapeHoldTimer);
+        shapeHoldTimer = setTimeout(() => {
+          if (isDrawing && currentStroke) {
+            checkAndSnapShape(currentStroke);
+          }
+        }, 420);
       }
     });
 
     window.addEventListener('pointerup', () => {
+      clearTimeout(shapeHoldTimer);
+      if (appState.isPanning) {
+        appState.isPanning = false;
+        return;
+      }
       if (appState.isDraggingSelection) {
         appState.isDraggingSelection = false;
         return;
@@ -1069,6 +1265,8 @@
             if (s.isStamp) return pointInPolygon({x: s.x, y: s.y}, appState.lassoPath);
             return s.points.some(pt => pointInPolygon(pt, appState.lassoPath));
           });
+          appState.selectedTexts = appState.texts.filter(t => pointInPolygon({x: t.x, y: t.y}, appState.lassoPath));
+          appState.selectedImages = appState.images.filter(im => pointInPolygon({x: im.x + im.width/2, y: im.y + im.height/2}, appState.lassoPath));
           redrawAllStrokes();
           updateSelectionBoxUI();
         }
@@ -1079,30 +1277,171 @@
       currentStroke = null;
     });
 
+    // 🖼️ 剪贴板图片粘贴与文件插入 (Ctrl+V / Drag & Drop)
+    function addImageToCanvas(src, posX, posY) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        saveHistory();
+        const maxDim = Math.min(cssWidth * 0.7, 400);
+        let w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) { h = Math.round(h * (maxDim / w)); w = maxDim; }
+          else { w = Math.round(w * (maxDim / h)); h = maxDim; }
+        }
+        const x = posX !== undefined ? posX - w/2 : (cssWidth - w)/2;
+        const y = posY !== undefined ? posY - h/2 : (cssHeight - h)/2;
+        appState.images.push({
+          id: Date.now() + Math.random(),
+          img: img,
+          x: Math.max(10, x),
+          y: Math.max(10, y),
+          width: w,
+          height: h
+        });
+        redrawAllStrokes();
+      };
+      img.src = src;
+    }
+
+    window.addEventListener('paste', (e) => {
+      const items = (e.clipboardData || window.clipboardData).items;
+      for (const item of items) {
+        if (item.type.indexOf('image') !== -1) {
+          e.preventDefault();
+          const blob = item.getAsFile();
+          const reader = new FileReader();
+          reader.onload = (ev) => addImageToCanvas(ev.target.result);
+          reader.readAsDataURL(blob);
+          break;
+        }
+      }
+    });
+
+    workbenchWrapper.addEventListener('dragover', (e) => e.preventDefault());
+    workbenchWrapper.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+        const file = e.dataTransfer.files[0];
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (ev) => addImageToCanvas(ev.target.result);
+          reader.readAsDataURL(file);
+        }
+      }
+    });
+
+    const btnInsertImage = document.getElementById('btnInsertImage');
+    const imageFileInput = document.getElementById('imageFileInput');
+    btnInsertImage.onclick = () => imageFileInput.click();
+    imageFileInput.onchange = (e) => {
+      if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (ev) => addImageToCanvas(ev.target.result);
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    };
+
+    // 缩放导航坞 (Pan & Zoom)
+    document.getElementById('btnZoomIn').onclick = () => {
+      appState.zoom = Math.min(2.5, appState.zoom + 0.15);
+      applyZoomAndPan();
+    };
+    document.getElementById('btnZoomOut').onclick = () => {
+      appState.zoom = Math.max(0.4, appState.zoom - 0.15);
+      applyZoomAndPan();
+    };
+    document.getElementById('btnZoomReset').onclick = () => {
+      appState.zoom = 1.0;
+      appState.panX = 0;
+      appState.panY = 0;
+      applyZoomAndPan();
+    };
+    document.getElementById('btnZoomFit').onclick = () => {
+      appState.zoom = 1.0;
+      appState.panX = 0;
+      appState.panY = 0;
+      resizeCanvas();
+    };
+
+    workbenchWrapper.addEventListener('wheel', (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.1 : -0.1;
+        appState.zoom = Math.max(0.4, Math.min(2.5, appState.zoom + delta));
+        applyZoomAndPan();
+      }
+    }, { passive: false });
+
     function saveHistory() {
       if (appState.history.length > 25) appState.history.shift();
-      appState.history.push(JSON.parse(JSON.stringify(appState.strokes)));
+      appState.history.push({
+        strokes: JSON.parse(JSON.stringify(appState.strokes)),
+        texts: JSON.parse(JSON.stringify(appState.texts)),
+        images: appState.images.slice()
+      });
     }
 
     document.getElementById('btnUndo').onclick = () => {
       if (appState.history.length > 0) {
-        appState.strokes = appState.history.pop();
+        const prev = appState.history.pop();
+        appState.strokes = prev.strokes;
+        appState.texts = prev.texts || [];
+        appState.images = prev.images || [];
         clearSelection();
         redrawAllStrokes();
       }
     };
 
+    // 键盘快捷键 (P/E/L/T/Ctrl+Z/Space)
     window.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      const key = e.key.toLowerCase();
+      if ((e.ctrlKey || e.metaKey) && key === 'z') {
         e.preventDefault();
         document.getElementById('btnUndo').click();
+      } else if (key === 'p') {
+        appState.tool = 'brush'; updateToolButtonsUI();
+      } else if (key === 'e') {
+        appState.tool = 'eraser'; updateToolButtonsUI();
+      } else if (key === 'l') {
+        appState.tool = 'lasso'; updateToolButtonsUI();
+      } else if (key === 't') {
+        appState.tool = 'text'; updateToolButtonsUI();
+      } else if (e.code === 'Space') {
+        appState.isSpaceDown = true;
+        workbenchWrapper.style.cursor = 'grab';
       }
     });
 
+    window.addEventListener('keyup', (e) => {
+      if (e.code === 'Space') {
+        appState.isSpaceDown = false;
+        workbenchWrapper.style.cursor = 'default';
+      }
+    });
+
+    // 移动端双指轻敲撤销手势
+    let touchStartCount = 0;
+    let touchStartTime = 0;
+    workbenchWrapper.addEventListener('touchstart', (e) => {
+      touchStartCount = e.touches.length;
+      touchStartTime = Date.now();
+    });
+    workbenchWrapper.addEventListener('touchend', () => {
+      const elapsed = Date.now() - touchStartTime;
+      if (elapsed < 300 && touchStartCount === 2) {
+        document.getElementById('btnUndo').click();
+      }
+      touchStartCount = 0;
+    });
+
     document.getElementById('btnClearAll').onclick = () => {
-      if (confirm('确认清空小画纸吗？所有涂鸦将被抹除。')) {
+      if (confirm('确认清空小画纸吗？所有涂鸦、文字与图片将被抹除。')) {
         saveHistory();
         appState.strokes = [];
+        appState.texts = [];
+        appState.images = [];
         clearSelection();
         redrawAllStrokes();
       }
@@ -1351,6 +1690,27 @@
       };
       paletteColors.appendChild(btn);
     });
+
+    // 彩虹全光谱取色器
+    const customColorLabel = document.createElement('label');
+    customColorLabel.className = 'relative w-6 h-6 rounded-full overflow-hidden border border-slate-500 hover:scale-110 transition cursor-pointer flex items-center justify-center';
+    customColorLabel.title = '全光谱自定义取色';
+    customColorLabel.innerHTML = `
+      <div class="w-full h-full bg-[conic-gradient(from_0deg,#ff0000,#ffff00,#00ff00,#00ffff,#0000ff,#ff00ff,#ff0000)]"></div>
+      <input type="color" id="customColorPicker" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+    `;
+    paletteColors.appendChild(customColorLabel);
+
+    customColorLabel.querySelector('input').onchange = (e) => {
+      const col = e.target.value;
+      appState.currentColor = col;
+      activeColorDot.style.backgroundColor = col;
+      if (appState.tool === 'eraser' || appState.tool === 'lasso') {
+        appState.tool = 'brush';
+        updateToolButtonsUI();
+      }
+      paletteFlyout.classList.add('hidden');
+    };
 
     document.getElementById('btnTogglePalette').onclick = (e) => {
       e.stopPropagation();
