@@ -1,7 +1,7 @@
 // EazyOPC Canvas Tools — Service Worker
 // Navigations: network-first (fresh HTML on every visit, cached copy offline).
 // Same-origin static assets: stale-while-revalidate. Cross-origin: untouched.
-const CACHE_NAME = 'eazyopc-canvas-v2';
+const CACHE_NAME = 'eazyopc-canvas-v3';
 const PRECACHE_ASSETS = [
   '/favicon.ico',
   '/favicon.svg',
@@ -44,12 +44,16 @@ self.addEventListener('fetch', (event) => {
         .then((res) => {
           if (isCacheable(res)) {
             const copy = res.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put('/', copy)).catch(() => {});
+            // 按页面路径分别缓存 (/ 与 /privacy.html 互不覆盖)
+            const key = url.pathname === '/index.html' ? '/' : url.pathname;
+            caches.open(CACHE_NAME).then((cache) => cache.put(key, copy)).catch(() => {});
           }
           return res;
         })
         .catch(() =>
-          caches.match('/').then((cached) => cached || new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/plain' } }))
+          caches.match(url.pathname === '/index.html' ? '/' : url.pathname)
+            .then((cached) => cached || caches.match('/'))
+            .then((cached) => cached || new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/plain' } }))
         )
     );
     return;

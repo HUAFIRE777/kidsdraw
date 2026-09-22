@@ -47,7 +47,10 @@
     section.policy ul { padding-left: 20px; margin: 8px 0; }
     section.policy li { margin: 4px 0; }
     code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; padding: 1px 6px; border-radius: 6px; background: var(--card-2); border: 1px solid var(--border); color: var(--text); }
-    table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 13px; table-layout: fixed; }
+    th:first-child, td:first-child { width: 42%; }
+    td, th, p, li { overflow-wrap: anywhere; }
+    code { word-break: break-all; }
     th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--muted); }
     th { color: var(--text); font-weight: 800; }
     .back { display: inline-flex; align-items: center; gap: 6px; margin-top: 32px; padding: 10px 16px; border-radius: var(--radius-md); background: linear-gradient(135deg, #ec4899, #db2777); color: #fff; text-decoration: none; font-weight: 800; }
