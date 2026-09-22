@@ -712,8 +712,10 @@
     }
     body.theme-light #proModal #btnCloseProModal,
     body.theme-light #restoreModal #btnCloseRestoreModal {
-      color: #475569 !important;
-      font-weight: 600 !important;
+      background: transparent !important;
+      border-color: transparent !important;
+      color: #0f172a !important;
+      font-weight: 800 !important;
     }
     body.theme-light #proModal #btnCloseProModal:hover {
       color: #0f172a !important;
@@ -5325,7 +5327,7 @@
       return {
         v: 1,
         savedAt: Date.now(),
-        currentPageIndex: appState.currentPageIndex,
+        currentPageIndex: appState.isDualSpread ? 0 : appState.currentPageIndex, // 双板状态下刷新回到第 1 页
         paper: appState.paper,
         ratio: appState.ratio,
         pages: (appState.pages || []).map(p => ({
