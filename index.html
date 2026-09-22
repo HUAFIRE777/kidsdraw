@@ -113,6 +113,8 @@
 
   <!-- Tailwind CSS & jsPDF CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- dark: 变体跟随站内白天/夜间开关 (html.dark)，而不是跟随系统设置 -->
+  <script>tailwind.config = { darkMode: 'class' };</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   
   <style>
@@ -1010,6 +1012,62 @@
     .kd-replay-speeds { display: flex; gap: 4px; }
     .kd-pro-tag { font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 999px; background: #fbbf24; color: #451a03; }
 
+    /* ================= Round 4 · PART 2：浮动坞跟随主题 (暗色玻璃 / 白色玻璃) ================= */
+    body:not(.theme-light) :is(#leftSidebar, #zoomDock, #pageManagerDock) {
+      background: rgba(26, 17, 40, .78) !important;
+      border-color: rgba(255, 255, 255, .10) !important;
+      box-shadow: var(--kd-shadow-lg) !important;
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      color: #e2e8f0 !important;
+    }
+    body:not(.theme-light) :is(#moreToolsDrawer, #mediaMenu, #layersPanel, #brushStudioFlyout, #paletteFlyout) {
+      background: var(--kd-surface) !important;
+      border-color: var(--kd-border) !important;
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    }
+    body:not(.theme-light) #leftSidebar button:not(.tool-btn-active) { color: #e2e8f0; }
+    body:not(.theme-light) #leftSidebar button:not(.tool-btn-active):hover,
+    body:not(.theme-light) :is(#zoomDock, #pageManagerDock) button:not(#btnAddPage):hover { background: rgba(255, 255, 255, .08) !important; }
+    body:not(.theme-light) #leftSidebar .w-7.h-px { background: rgba(255, 255, 255, .12) !important; }
+    body.theme-light :is(#leftSidebar, #zoomDock, #pageManagerDock) { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+    #leftSidebar .tool-btn-active { box-shadow: 0 4px 14px rgba(236, 72, 153, .45), 0 0 0 2px rgba(255,255,255,.9) inset; }
+
+    /* 顶栏层级：次要按钮统一 32px 幽灵风格；导出为主按钮；Pro 金色徽章 */
+    #topNavbar :is(#btnThemeToggle, #btnToggleFullscreen, #btnLangDropdown) { height: var(--kd-btn-h-sm); border-radius: var(--kd-radius-md); display: inline-flex; align-items: center; }
+    body:not(.theme-light) #topNavbar :is(#btnThemeToggle, #btnToggleFullscreen, #btnLangDropdown) { background: transparent !important; border-color: rgba(255,255,255,.12) !important; }
+    body:not(.theme-light) #topNavbar :is(#btnThemeToggle, #btnToggleFullscreen, #btnLangDropdown):hover { background: rgba(255,255,255,.08) !important; }
+    #topNavbar #btnExport { height: var(--kd-btn-h-sm); border-radius: var(--kd-radius-md); padding-left: 12px; padding-right: 12px; }
+    #topNavbar #btnTopProBadge { height: var(--kd-btn-h-sm); border-radius: var(--kd-radius-md); background: linear-gradient(135deg, #fcd34d, #f59e0b) !important; border-color: #f59e0b !important; color: #451a03 !important; font-weight: 800; box-shadow: 0 2px 10px rgba(245, 158, 11, .35); }
+    #topNavbar #btnTopProBadge * { color: #451a03 !important; }
+    #topNavbar #btnTopProBadge:hover { filter: brightness(1.05); }
+
+    /* 旧弹窗统一入场动画 (150ms)，尊重减少动态效果 */
+    :is(#exportModal, #restoreModal, #feedbackModal, #proModal, #mobileSaveModal):not(.hidden) > div { animation: kdPop .15s ease-out; }
+    @media (prefers-reduced-motion: reduce) {
+      :is(#exportModal, #restoreModal, #feedbackModal, #proModal, #mobileSaveModal):not(.hidden) > div { animation: none; }
+    }
+
+    /* 空画板提示 */
+    #kdEmptyHint { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); pointer-events: none; user-select: none; z-index: 5; max-width: 86%; text-align: center; font-size: 14px; font-weight: 700; color: rgba(71, 85, 105, .72); line-height: 1.6; transition: opacity .2s; }
+    #kdEmptyHint.is-hidden { opacity: 0; }
+    #kdEmptyHint .kd-kbd { color: #334155; background: rgba(255,255,255,.7); border-color: rgba(100,116,139,.35); }
+
+    /* 快捷键面板 */
+    .kd-shortcuts { display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; align-items: center; margin: 0; }
+    .kd-shortcuts dt { font-size: 13px; color: var(--kd-text); }
+    .kd-shortcuts dd { margin: 0; display: flex; gap: 4px; justify-content: flex-end; flex-wrap: wrap; }
+
+    /* SEO / 介绍区排版 */
+    #seoArticleSection p { line-height: 1.7; }
+    #seoArticleSection > div:first-child p { max-width: 68ch; margin-left: auto; margin-right: auto; }
+    #seoArticleSection .feature-card { height: 100%; display: flex; flex-direction: column; border-radius: var(--kd-radius-lg); }
+    #seoArticleSection .feature-card p { max-width: 68ch; }
+    #seoArticleSection h3 { letter-spacing: -.01em; }
+
+    body.theme-light #adFreeBadge { background: #d1fae5 !important; border-color: #10b981 !important; color: #065f46 !important; font-weight: 800; }
+    body.theme-light #seoArticleSection > div:first-child > div:first-child { background: #eef2ff !important; border-color: #818cf8 !important; color: #3730a3 !important; }
+    body.theme-light #seoArticleSection > div:first-child > div:first-child span { color: #3730a3 !important; font-weight: 800; }
+
     /* 家长验证 (Parental gate) */
     .kd-gate-question { font-size: 28px; font-weight: 900; text-align: center; letter-spacing: .02em; padding: var(--kd-space-3); border-radius: var(--kd-radius-lg); background: var(--kd-surface-2); border: 1px solid var(--kd-border); color: var(--kd-text); }
 </style>
@@ -1412,6 +1470,9 @@
         <button type="button" class="kd-sfx-btn flex items-center gap-2 p-2 rounded-xl hover:bg-amber-50 dark:hover:bg-slate-800 transition text-left" data-kd-action="sfx" aria-pressed="true">
           <span class="kd-sfx-emoji">🔊</span> <span class="text-xs font-medium kd-sfx-label">音效：开</span>
         </button>
+        <button type="button" class="flex items-center gap-2 p-2 rounded-xl hover:bg-amber-50 dark:hover:bg-slate-800 transition text-left col-span-2" data-kd-action="shortcuts">
+          <span>⌨️</span> <span class="text-xs font-medium" data-i18n="btn_shortcuts">快捷键 (?)</span>
+        </button>
       </div>
       <div class="pt-1.5 border-t border-stone-200 dark:border-slate-800 flex justify-between">
         <button id="btnClearAllDrawer" class="w-full py-1 text-center text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition" data-i18n="tool_clear">🗑️ 清空画纸重新画</button>
@@ -1759,6 +1820,7 @@
         <div id="laserLayer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
         <div id="stickyLayer" class="absolute inset-0 pointer-events-none"></div>
         <div id="selectionOverlay" class="absolute inset-0 pointer-events-none"></div>
+        <div id="kdEmptyHint" aria-hidden="true"><span data-i18n="empty_hint">拿起画笔开始画吧 · 按</span> <span class="kd-kbd">?</span> <span data-i18n="empty_hint_tail">查看快捷键</span></div>
         <div id="rightPageBadge" class="hidden absolute bottom-2 right-3 px-2 py-0.5 rounded-md bg-stone-900/60 text-[10px] text-amber-300 font-mono select-none pointer-events-none border border-slate-700/50 backdrop-blur-sm">第 2 页</div>
       </div>
     </div>
@@ -2615,6 +2677,26 @@
         <button type="button" id="btnReplayExport" class="kd-btn kd-btn-primary">
           <span aria-hidden="true">⬇</span> <span data-i18n="replay_export">导出回放视频 (WebM)</span> <span id="replayProTag" class="kd-pro-tag">Pro</span>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= Round 4: ⌨️ 快捷键面板 (按 ? 打开) ================= -->
+  <div id="shortcutsModal" class="kd-modal hidden" role="dialog" aria-modal="true" aria-labelledby="shortcutsTitle">
+    <div class="kd-modal-card">
+      <div class="kd-modal-head">
+        <div class="kd-modal-icon" aria-hidden="true">⌨️</div>
+        <div>
+          <h3 id="shortcutsTitle" class="kd-modal-title" data-i18n="shortcuts_title">键盘快捷键</h3>
+          <p class="kd-modal-sub" data-i18n="shortcuts_desc">给爸爸妈妈和大孩子用的小技巧</p>
+        </div>
+        <button type="button" id="btnCloseShortcuts" class="kd-modal-close" aria-label="Close">✕</button>
+      </div>
+      <div class="kd-modal-body">
+        <dl id="shortcutsList" class="kd-shortcuts"></dl>
+      </div>
+      <div class="kd-modal-foot">
+        <button type="button" id="btnOkShortcuts" class="kd-btn kd-btn-primary" data-i18n="shortcuts_ok">知道啦</button>
       </div>
     </div>
   </div>
@@ -5987,7 +6069,8 @@
       } else if (key === 'v') {
         appState.tool = 'select'; updateToolButtonsUI();
       } else if (key === 'p') {
-        appState.tool = 'brush'; updateToolButtonsUI();
+        const curBrushBtn = document.getElementById('btnCurrentBrush');
+        appState.tool = (curBrushBtn && curBrushBtn.dataset.tool) || 'brush'; updateToolButtonsUI();
       } else if (key === 'e') {
         appState.tool = 'eraser'; updateToolButtonsUI();
       } else if (key === 'l') {
@@ -6964,6 +7047,7 @@ ${out}</svg>`;
     function applyTheme(theme) {
       const isLight = theme === 'light';
       document.body.classList.toggle('theme-light', isLight);
+      document.documentElement.classList.toggle('dark', !isLight);
       if (themeIcon) themeIcon.innerText = isLight ? '☀️' : '🌙';
       const dict = TRANSLATIONS[appState.lang] || TRANSLATIONS.zh;
       if (themeLabel) themeLabel.innerText = isLight ? (dict.theme_light || '白天') : (dict.theme_dark || '夜间');
@@ -8233,7 +8317,12 @@ ${out}</svg>`;
         replay_recording: '⏺ 正在录制回放视频… {sec} 秒',
         replay_saved: '🎬 回放视频已保存：{name}',
         replay_unsupported: '这个浏览器不支持录制视频，请用最新版 Chrome / Edge / Firefox。',
-        replay_mp4_note: '这个浏览器不支持 WebM，已改为录制 MP4。'
+        replay_mp4_note: '这个浏览器不支持 WebM，已改为录制 MP4。',
+        empty_hint: '拿起画笔开始画吧 · 按', empty_hint_tail: '查看快捷键',
+        btn_shortcuts: '快捷键 (?)', shortcuts_title: '键盘快捷键', shortcuts_desc: '给爸爸妈妈和大孩子用的小技巧', shortcuts_ok: '知道啦',
+        sc_brush: '画笔', sc_fill: '魔法填色 (油漆桶)', sc_eraser: '橡皮擦', sc_stamp: '印章', sc_kaleido: '万花筒画笔', sc_select: '选择调整',
+        sc_hand: '抓手平移 (或按住空格)', sc_text: '写字', sc_lasso: '套索圈选', sc_undo: '撤销', sc_redo: '重做', sc_delete: '删除选中',
+        sc_save: '保存作品', sc_open: '打开作品', sc_help: '打开这个面板', sc_close: '关闭弹窗', shortcut_word: '快捷键'
       },
       en: {
         gate_title: 'Grown-ups only',
@@ -8277,7 +8366,12 @@ ${out}</svg>`;
         replay_recording: '⏺ Recording replay video… {sec}s',
         replay_saved: '🎬 Replay video saved: {name}',
         replay_unsupported: 'This browser cannot record video. Please use the latest Chrome, Edge or Firefox.',
-        replay_mp4_note: 'This browser cannot record WebM, so the replay was recorded as MP4.'
+        replay_mp4_note: 'This browser cannot record WebM, so the replay was recorded as MP4.',
+        empty_hint: 'Pick up a brush and start drawing · press', empty_hint_tail: 'for shortcuts',
+        btn_shortcuts: 'Shortcuts (?)', shortcuts_title: 'Keyboard shortcuts', shortcuts_desc: 'Handy tips for parents and older kids', shortcuts_ok: 'Got it',
+        sc_brush: 'Brush', sc_fill: 'Magic fill (paint bucket)', sc_eraser: 'Eraser', sc_stamp: 'Stamp', sc_kaleido: 'Kaleidoscope brush', sc_select: 'Select & adjust',
+        sc_hand: 'Pan the board (or hold Space)', sc_text: 'Text', sc_lasso: 'Lasso select', sc_undo: 'Undo', sc_redo: 'Redo', sc_delete: 'Delete selection',
+        sc_save: 'Save artwork', sc_open: 'Open artwork', sc_help: 'Open this panel', sc_close: 'Close a dialog', shortcut_word: 'Shortcut'
       }
     };
     (function mergeR4I18n() {
@@ -8991,6 +9085,7 @@ ${out}</svg>`;
 
     // 所有 data-kd-action 按钮 (顶栏 + 更多抽屉) 统一分发
     const KD_ACTIONS = {
+      shortcuts: () => kdOpenShortcuts(),
       replay: () => KDReplay.open(),
       save: () => kdSaveDocFile(),
       open: () => kdOpenDocPicker(),
@@ -9017,7 +9112,83 @@ ${out}</svg>`;
       else if (k === 'o') { e.preventDefault(); kdOpenDocPicker(); }
     });
 
+    // ---------- ✨ 空画板提示 · 工具提示里的快捷键 · 快捷键面板 ----------
+    function kdUpdateEmptyHint() {
+      const el = document.getElementById('kdEmptyHint');
+      if (!el) return;
+      const empty = !(appState.strokes && appState.strokes.length) && !(appState.texts && appState.texts.length) && !(appState.images && appState.images.length) && !(appState.videos && appState.videos.length);
+      el.classList.toggle('is-hidden', !empty);
+    }
+    const kdOrigRedraw = redrawAllStrokes;
+    redrawAllStrokes = function (targetCtx, scale, transparent) {
+      const r = kdOrigRedraw.apply(this, arguments);
+      if (!targetCtx || targetCtx === ctx) kdUpdateEmptyHint();
+      return r;
+    };
+    function kdAfterBoardChange() { kdUpdateEmptyHint(); }
+    const kdOrigScheduleAutosave = scheduleAutosave;
+    scheduleAutosave = function () { kdUpdateEmptyHint(); return kdOrigScheduleAutosave.apply(this, arguments); };
+    const kdMainCanvasEl = document.getElementById('mainCanvas');
+    if (kdMainCanvasEl) kdMainCanvasEl.addEventListener('pointerdown', () => setTimeout(kdUpdateEmptyHint, 0));
+    const KD_TOOL_KEYS = [
+      ['#btnCurrentBrush', 'P'], ['[data-tool="fill"]', 'F'], ['[data-tool="eraser"]', 'E'], ['#btnToggleStamps', 'S'],
+      ['[data-tool="kaleidoscope"]', 'K'], ['[data-tool="select"]', 'V'], ['[data-tool="hand"]', 'H'], ['[data-tool="text"]', 'T'],
+      ['#btnUndoDrawer', 'Ctrl+Z']
+    ];
+    function kdApplyShortcutHints() {
+      const word = kdT('shortcut_word');
+      KD_TOOL_KEYS.forEach(([sel, key]) => {
+        document.querySelectorAll(sel).forEach((el) => {
+          const tKey = el.getAttribute('data-i18n-title');
+          const d = TRANSLATIONS[appState.lang] || TRANSLATIONS.zh;
+          let base = (tKey && (d[tKey] || TRANSLATIONS.zh[tKey])) || el.dataset.kdBaseTitle || el.title || '';
+          if (!el.dataset.kdBaseTitle) el.dataset.kdBaseTitle = base;
+          if (!tKey) base = el.dataset.kdBaseTitle;
+          el.title = `${base} · ${word} ${key}`;
+          el.setAttribute('aria-keyshortcuts', key.replace('Ctrl+', 'Control+'));
+        });
+      });
+    }
+    const kdMod = /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent) ? '⌘' : 'Ctrl';
+    function kdRenderShortcuts() {
+      const list = document.getElementById('shortcutsList');
+      if (!list) return;
+      const rows = [
+        ['sc_brush', ['P']], ['sc_fill', ['F']], ['sc_eraser', ['E']], ['sc_stamp', ['S']], ['sc_kaleido', ['K']],
+        ['sc_select', ['V']], ['sc_hand', ['H']], ['sc_text', ['T']], ['sc_lasso', ['L']],
+        ['sc_undo', [kdMod, 'Z']], ['sc_redo', [kdMod, 'Shift', 'Z']], ['sc_delete', ['Delete']],
+        ['sc_save', [kdMod, 'S']], ['sc_open', [kdMod, 'O']], ['sc_help', ['?']], ['sc_close', ['Esc']]
+      ];
+      list.innerHTML = '';
+      rows.forEach(([k, keys]) => {
+        const dt = document.createElement('dt'); dt.textContent = kdT(k);
+        const dd = document.createElement('dd');
+        keys.forEach((kk) => { const kb = document.createElement('kbd'); kb.className = 'kd-kbd'; kb.textContent = kk; dd.appendChild(kb); });
+        list.appendChild(dt); list.appendChild(dd);
+      });
+    }
+    const kdShortcutsModal = document.getElementById('shortcutsModal');
+    function kdOpenShortcuts() { kdRenderShortcuts(); if (kdShortcutsModal) kdShortcutsModal.classList.remove('hidden'); }
+    function kdCloseShortcuts() { if (kdShortcutsModal) kdShortcutsModal.classList.add('hidden'); }
+    ['btnCloseShortcuts', 'btnOkShortcuts'].forEach((id) => { const b = document.getElementById(id); if (b) b.onclick = kdCloseShortcuts; });
+    if (kdShortcutsModal) kdShortcutsModal.addEventListener('click', (e) => { if (e.target === kdShortcutsModal) kdCloseShortcuts(); });
+    // 单键快捷键：? 面板、F 填色、S 印章、K 万花筒；输入文字时不触发
+    window.addEventListener('keydown', (e) => {
+      const tgt = e.target, tag = tgt && tgt.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (tgt && tgt.isContentEditable)) return;
+      if (e.key === 'Escape') { kdCloseShortcuts(); return; }
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (document.querySelector('.kd-modal:not(.hidden)') && e.key !== '?') return;
+      if (e.key === '?') { e.preventDefault(); if (kdShortcutsModal && !kdShortcutsModal.classList.contains('hidden')) kdCloseShortcuts(); else kdOpenShortcuts(); return; }
+      const k = (e.key || '').toLowerCase();
+      if (k === 'f') { appState.tool = 'fill'; updateToolButtonsUI(); }
+      else if (k === 's') { appState.tool = 'stamp'; updateToolButtonsUI(); }
+      else if (k === 'k') { appState.tool = 'kaleidoscope'; updateToolButtonsUI(); }
+    });
+
     function kdOnLanguageChanged() {
+      try { kdApplyShortcutHints(); } catch (_) {}
+      try { kdRenderShortcuts(); } catch (_) {}
       try { kdRenderColoringLibrary(); } catch (_) {}
       try { kdRenderStampPanel(); } catch (_) {}
       try { if (typeof kdReplayOnLang === 'function') kdReplayOnLang(); } catch (_) {}
@@ -9029,6 +9200,8 @@ ${out}</svg>`;
     const kdOrigSetLanguage = setLanguage;
     setLanguage = function (lang) { kdOrigSetLanguage(lang); try { window.KDSfx.syncUI(); } catch (_) {} if (typeof kdOnLanguageChanged === 'function') kdOnLanguageChanged(); };
     window.KDSfx.syncUI();
+    try { kdApplyShortcutHints(); } catch (_) {}
+    kdUpdateEmptyHint();
   </script>
 </body>
 </html>
