@@ -6348,6 +6348,7 @@
     if (btnToggleStamps && stampsMenu) {
       btnToggleStamps.onclick = (e) => {
         e.stopPropagation();
+        closeAllFlyouts('stampsMenu'); // 同一时间只开一个浮窗 (之前笔刷工坊/调色盘会盖在新打开的面板上)
         stampsMenu.classList.toggle('hidden');
       };
     }
@@ -7559,6 +7560,7 @@ ${out}</svg>`;
     if (btnToggleColoringCards && coloringCardsMenu) {
       btnToggleColoringCards.onclick = (e) => {
         e.stopPropagation();
+        closeAllFlyouts('coloringCardsMenu'); // 同一时间只开一个浮窗 (之前笔刷工坊/调色盘会盖在新打开的面板上)
         coloringCardsMenu.classList.toggle('hidden');
         if (moreToolsDrawer) moreToolsDrawer.classList.add('hidden');
         if (mediaMenu) mediaMenu.classList.add('hidden');
@@ -7583,6 +7585,7 @@ ${out}</svg>`;
     if (btnToggleMoreTools && moreToolsDrawer) {
       btnToggleMoreTools.onclick = (e) => {
         e.stopPropagation();
+        closeAllFlyouts('moreToolsDrawer'); // 同一时间只开一个浮窗 (之前笔刷工坊/调色盘会盖在新打开的面板上)
         moreToolsDrawer.classList.toggle('hidden');
         if (coloringCardsMenu) coloringCardsMenu.classList.add('hidden');
         if (mediaMenu) mediaMenu.classList.add('hidden');
@@ -7606,6 +7609,7 @@ ${out}</svg>`;
     if (btnToggleMediaMenu && mediaMenu) {
       btnToggleMediaMenu.onclick = (e) => {
         e.stopPropagation();
+        closeAllFlyouts('mediaMenu'); // 同一时间只开一个浮窗 (之前笔刷工坊/调色盘会盖在新打开的面板上)
         mediaMenu.classList.toggle('hidden');
         if (moreToolsDrawer) moreToolsDrawer.classList.add('hidden');
         if (coloringCardsMenu) coloringCardsMenu.classList.add('hidden');
@@ -7775,6 +7779,7 @@ ${out}</svg>`;
     if (btnToggleLayers && layersPanel) {
       btnToggleLayers.onclick = (e) => {
         e.stopPropagation();
+        closeAllFlyouts('layersPanel'); // 同一时间只开一个浮窗 (之前笔刷工坊/调色盘会盖在新打开的面板上)
         layersPanel.classList.toggle('hidden');
         if (moreToolsDrawer) moreToolsDrawer.classList.add('hidden');
         if (coloringCardsMenu) coloringCardsMenu.classList.add('hidden');
@@ -9392,6 +9397,84 @@ ${out}</svg>`;
     window.KDSfx.syncUI();
     try { kdApplyShortcutHints(); } catch (_) {}
     kdUpdateEmptyHint();
+  </script>
+  <script id="kdRound5Script">
+    // ---------- Round 5：笔刷工坊多语言 · 浮窗自动适配画板高度 ----------
+    (function () {
+      const B = {
+        marker: ['斜头糖果马克笔', '大面积平涂 · 叠色', 'Candy Marker', 'Bold flat colour · layering'],
+        crayon: ['天然油画棒蜡笔', '粗粝颗粒 · 童趣质感', 'Oil Pastel Crayon', 'Chunky, playful texture'],
+        brush: ['水彩软毛笔', '湿画晕染 · 柔和透明', 'Watercolour Brush', 'Soft, see-through colour'],
+        white_gel: ['纯白魔法笔', '不透明白 · 星星点缀', 'Magic White Pen', 'Opaque white · sparkles'],
+        fineliner: ['精细勾线笔', '细线轮廓 · 细节描边', 'Fine Liner', 'Thin outlines · details'],
+        gpen: ['彩墨钢笔', '弹性运笔 · 主线勾勒', 'Ink Pen', 'Springy lines · main outlines'],
+        maru: ['细线丸笔', '精细毛发 · 细节刻画', 'Tiny Detail Pen', 'Whiskers, hair & tiny details'],
+        pencil: ['彩色铅笔', '细腻石墨 · 启蒙排线', 'Colour Pencil', 'Soft pencil lines'],
+        blue_pencil: ['天空蓝铅笔', '轻柔草稿 · 形状定位', 'Sky-blue Sketch Pencil', 'Light sketch · plan shapes'],
+        chalk: ['教室粉笔', '自然飞白 · 细粉微粒', 'Chalk', 'Dusty, broken chalk lines'],
+        fude_pen: ['弯头美工笔', '动态粗细 · 汉字书法', 'Brush Pen', 'Thick & thin · lettering'],
+        calligraphy: ['柔性秀丽笔', '传统软毫 · 苍劲饱满', 'Calligraphy Pen', 'Flat nib · bold strokes'],
+        spray: ['星光喷雾刷', '梦幻颗粒 · 星空氛围', 'Sparkle Spray', 'Dreamy dots · starry skies'],
+        highlighter: ['荧光彩虹笔', '平头半透 · 糖果高亮', 'Neon Highlighter', 'See-through · bright glow'],
+        dotted: ['趣味虚线笔', '蚂蚁爬线 · 裁剪引导', 'Dashed Line Pen', 'Marching-ant dashes · cut lines'],
+        ballpoint: ['经典圆珠笔', '流利顺滑 · 签名随记', 'Ballpoint Pen', 'Smooth everyday writing']
+      };
+      const TIP = {
+        zh: '✏️ 画笔 · 再点一下打开笔刷工坊 (16 种蜡笔、马克笔、铅笔…)',
+        en: '✏️ Brush · tap again to open the Brush Studio (16 crayons, markers, pencils…)',
+        ja: '✏️ ブラシ · もう一度タップでブラシ工房 (16 種類)',
+        ko: '✏️ 붓 · 한 번 더 누르면 브러시 공방 (16종)',
+        de: '✏️ Pinsel · nochmal tippen für das Pinselstudio (16 Pinsel)',
+        es: '✏️ Pincel · toca otra vez para abrir el estudio de pinceles (16)',
+        fr: '✏️ Pinceau · touchez encore pour ouvrir l’atelier de pinceaux (16)'
+      };
+      Object.keys(TRANSLATIONS).forEach((l) => { TRANSLATIONS[l].tip_brush = TIP[l] || TIP.en; });
+      function localizeBrushStudio() {
+        const zh = (appState.lang || 'zh') === 'zh';
+        document.querySelectorAll('#brushStudioFlyout .brush-card').forEach((card) => {
+          const t = B[card.dataset.brush];
+          if (!t) return;
+          const nameDiv = card.querySelector('div > div:first-child');
+          const descDiv = card.querySelector('div > div:nth-child(2)');
+          const nameSpan = nameDiv && nameDiv.querySelector('span');
+          if (nameSpan) nameSpan.textContent = zh ? t[0] : t[2];
+          else if (nameDiv) nameDiv.textContent = zh ? t[0] : t[2];
+          if (descDiv) descDiv.textContent = zh ? t[1] : t[3];
+          card.title = zh ? t[0] : t[2];
+        });
+        const head = document.querySelector('#brushStudioFlyout .tracking-wide');
+        if (head) head.textContent = zh ? '童趣笔刷工坊 · Brush Studio' : 'Brush Studio';
+        const cnt = document.querySelector('#brushStudioFlyout .font-mono');
+        if (cnt) cnt.textContent = zh ? '16 款安全画材' : '16 kid-safe brushes';
+        const cb = document.getElementById('btnCurrentBrush');
+        if (cb) { const tip = (TRANSLATIONS[appState.lang] || TRANSLATIONS.zh).tip_brush; cb.title = tip + ' · ' + kdT('shortcut_word') + ' P'; }
+      }
+      const prevOnLang = kdOnLanguageChanged;
+      kdOnLanguageChanged = function () { prevOnLang.apply(this, arguments); try { localizeBrushStudio(); } catch (_) {} };
+      localizeBrushStudio();
+
+      // 浮窗 (调色盘 / 笔刷工坊 / 更多工具 / 涂色卡 / 印章 / 媒体 / 图层) 打开时自动夹进画板区域：
+      // 画板区域 overflow:hidden，之前在 900px 高的屏幕上调色盘下半截 (常用色、粗细) 被裁掉点不到
+      const FLY = ['paletteFlyout', 'brushStudioFlyout', 'moreToolsDrawer', 'coloringCardsMenu', 'stampsMenu', 'mediaMenu', 'layersPanel'];
+      function fit(el) {
+        if (!el || el.classList.contains('hidden')) return;
+        const wrap = document.getElementById('workbenchWrapper');
+        if (!wrap || !wrap.contains(el)) return;
+        el.style.maxHeight = '';
+        const wr = wrap.getBoundingClientRect();
+        const avail = Math.floor(wr.height - 16);
+        let r = el.getBoundingClientRect();
+        if (r.height > avail) { el.style.maxHeight = avail + 'px'; el.style.overflowY = 'auto'; r = el.getBoundingClientRect(); }
+        if (r.bottom > wr.bottom - 8) {
+          const top = Math.max(8, (r.top - wr.top) - (r.bottom - (wr.bottom - 8)));
+          el.style.top = top + 'px';
+        }
+      }
+      const mo = new MutationObserver((recs) => recs.forEach((rec) => { if (!rec.target.classList.contains('hidden')) requestAnimationFrame(() => fit(rec.target)); }));
+      FLY.forEach((id) => { const el = document.getElementById(id); if (el) mo.observe(el, { attributes: true, attributeFilter: ['class'] }); });
+      window.addEventListener('resize', () => FLY.forEach((id) => fit(document.getElementById(id))));
+      window.kdFitFlyout = fit;
+    })();
   </script>
 </body>
 </html>
