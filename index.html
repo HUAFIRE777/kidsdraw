@@ -3085,7 +3085,23 @@
       targetCtx.restore();
     }
 
+    // 当前主画板重绘 (right board / single board)
     function redrawAllStrokes(targetCtx = ctx, scale = dpr, transparent = false) {
+      renderSceneOnContext(targetCtx, scale, transparent, {
+        strokes: appState.strokes,
+        texts: appState.texts,
+        images: appState.images,
+        videos: appState.videos
+      });
+      if (targetCtx === ctx && typeof scheduleAutosave === 'function') scheduleAutosave();
+    }
+
+    // 🌟 统一场景渲染器：主画板、左侧第 1 页画板、PDF/PNG 导出共用，保证渲染完全一致
+    function renderSceneOnContext(targetCtx, scale, transparent, scene) {
+      const sceneStrokes = (scene && scene.strokes) || [];
+      const sceneTexts = (scene && scene.texts) || [];
+      const sceneImages = (scene && scene.images) || [];
+      const sceneVideos = (scene && scene.videos) || [];
       renderBackgroundOnContext(targetCtx, cssWidth, cssHeight, scale, transparent);
 
       targetCtx.save();
@@ -3093,8 +3109,8 @@
       targetCtx.scale(scale, scale);
 
       // 0. 渲染插入的视频画面 (可直接在视频上作画)
-      if (appState.videos && appState.videos.length > 0) {
-        for (const v of appState.videos) {
+      if (sceneVideos.length > 0) {
+        for (const v of sceneVideos) {
           if (v.visible !== false && v.videoEl && (v.videoEl.readyState >= 2 || v.videoEl.currentTime > 0)) {
             targetCtx.save();
             targetCtx.globalAlpha = v.opacity !== undefined ? v.opacity : 1;
@@ -3111,7 +3127,7 @@
       }
 
       // 1. 渲染插入/粘贴的图片 (支持 360° 旋转)
-      for (const im of appState.images) {
+      for (const im of sceneImages) {
         if (im.img && im.img.complete) {
           targetCtx.save();
           const cx = im.x + im.width / 2;
@@ -3124,10 +3140,10 @@
       }
 
       // 2. 渲染手绘涂鸦笔触与趣味印章 (7 种专业工程与商业画笔)
-      for (const s of appState.strokes) {
+      for (const s of sceneStrokes) {
         if (s.isStamp) {
           targetCtx.save();
-          targetCtx.font = `\${s.size}px serif`;
+          targetCtx.font = `${Number(s.size) || 54}px serif`;
           targetCtx.textAlign = 'center';
           targetCtx.textBaseline = 'middle';
           targetCtx.fillText(s.stamp, s.x, s.y);
@@ -3228,7 +3244,7 @@
       }
 
       // 3. 渲染自由文本 (支持 9 款开源艺术字体、多行对齐与 360° 旋转)
-      for (const t of appState.texts) {
+      for (const t of sceneTexts) {
         if (t._editing) continue;
         targetCtx.save();
         const fontSize = Number(t.size) || 24;
@@ -3385,7 +3401,15 @@
 
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
       for (const s of (appState.selectedStrokes || [])) {
-        for (const pt of s.points) {
+        if (s.isStamp) {
+          const half = (Number(s.size) || 54) / 2;
+          if (s.x - half < minX) minX = s.x - half;
+          if (s.y - half < minY) minY = s.y - half;
+          if (s.x + half > maxX) maxX = s.x + half;
+          if (s.y + half > maxY) maxY = s.y + half;
+          continue;
+        }
+        for (const pt of (s.points || [])) {
           if (pt.x < minX) minX = pt.x;
           if (pt.y < minY) minY = pt.y;
           if (pt.x > maxX) maxX = pt.x;
@@ -3478,7 +3502,8 @@
 
         const snapStrokes = (appState.selectedStrokes || []).map(s => ({
           stroke: s,
-          origPoints: s.points.map(p => ({ x: p.x, y: p.y }))
+          stampPos: s.isStamp ? { x: s.x, y: s.y } : null,
+          origPoints: (s.points || []).map(p => ({ x: p.x, y: p.y }))
         }));
         const snapImgs = (appState.selectedImages || []).map(im => ({
           ref: im,
@@ -3504,6 +3529,13 @@
 
           // 1. 旋转手绘线条笔画
           for (const item of snapStrokes) {
+            if (item.stampPos) {
+              const sdx = item.stampPos.x - centerX;
+              const sdy = item.stampPos.y - centerY;
+              item.stroke.x = centerX + (sdx * cosA - sdy * sinA);
+              item.stroke.y = centerY + (sdx * sinA + sdy * cosA);
+              continue;
+            }
             for (let i = 0; i < item.origPoints.length; i++) {
               const orig = item.origPoints[i];
               const dx = orig.x - centerX;
@@ -3576,7 +3608,8 @@
           const snapStrokes = (appState.selectedStrokes || []).map(s => ({
             stroke: s,
             origSize: s.size || 2,
-            origPoints: s.points.map(pt => ({
+            stampPos: s.isStamp ? { x: s.x, y: s.y } : null,
+            origPoints: (s.points || []).map(pt => ({
               x: pt.x,
               y: pt.y,
               pressure: pt.pressure,
@@ -3655,6 +3688,12 @@
             // 1. 缩放手绘线条笔画
             for (const item of snapStrokes) {
               item.stroke.size = Math.max(1, item.origSize * avgScale);
+              if (item.stampPos) {
+                item.stroke.size = Math.max(12, item.origSize * avgScale);
+                item.stroke.x = newX + (item.stampPos.x - origBounds.x) * scaleX;
+                item.stroke.y = newY + (item.stampPos.y - origBounds.y) * scaleY;
+                continue;
+              }
               for (let i = 0; i < item.origPoints.length; i++) {
                 const origPt = item.origPoints[i];
                 const targetPt = item.stroke.points[i];
@@ -3715,7 +3754,14 @@
 
       // 1. 旋转手绘线条笔画
       for (const s of (appState.selectedStrokes || [])) {
-        for (const pt of s.points) {
+        if (s.isStamp) {
+          const sdx = s.x - centerX;
+          const sdy = s.y - centerY;
+          s.x = centerX + (sdx * cosA - sdy * sinA);
+          s.y = centerY + (sdx * sinA + sdy * cosA);
+          continue;
+        }
+        for (const pt of (s.points || [])) {
           const dx = pt.x - centerX;
           const dy = pt.y - centerY;
           pt.x = centerX + (dx * cosA - dy * sinA);
@@ -3754,6 +3800,12 @@
       if (appState.selectedStrokes && appState.selectedStrokes.length > 0) {
         const clonedStrokes = [];
         for (const s of appState.selectedStrokes) {
+          if (s.isStamp) {
+            const stampClone = { ...s, id: Date.now() + Math.random(), x: s.x + 24, y: s.y + 24 };
+            appState.strokes.push(stampClone);
+            clonedStrokes.push(stampClone);
+            continue;
+          }
           const clone = {
             id: Date.now() + Math.random(),
             tool: s.tool,
@@ -3907,76 +3959,12 @@
       if (!p) return;
 
       const refCtx = refCanvas.getContext('2d');
-      renderBackgroundOnContext(refCtx, cssWidth, cssHeight, dpr, false);
-
-      refCtx.save();
-      refCtx.setTransform(1, 0, 0, 1, 0, 0);
-      refCtx.scale(dpr, dpr);
-
-      // 渲染对照页图片
-      for (const im of (p.images || [])) {
-        if (im.img && im.img.complete) {
-          refCtx.save();
-          const cx = im.x + im.width / 2;
-          const cy = im.y + im.height / 2;
-          refCtx.translate(cx, cy);
-          if (im.rotation) refCtx.rotate(im.rotation);
-          refCtx.drawImage(im.img, -im.width / 2, -im.height / 2, im.width, im.height);
-          refCtx.restore();
-        }
-      }
-
-      // 渲染对照页笔触
-      for (const s of (p.strokes || [])) {
-        if (!s.points || s.points.length === 0) continue;
-        refCtx.save();
-        refCtx.strokeStyle = s.color || '#18181b';
-        refCtx.fillStyle = s.color || '#18181b';
-        refCtx.lineCap = 'round';
-        refCtx.lineJoin = 'round';
-        refCtx.lineWidth = Math.max(1, s.size || 3);
-        if (s.tool === 'highlighter') {
-          refCtx.globalCompositeOperation = 'multiply';
-          refCtx.globalAlpha = 0.35;
-          refCtx.lineWidth = (s.size || 3) * 3.6;
-        }
-
-        if (s.points.length === 1) {
-          refCtx.beginPath();
-          refCtx.arc(s.points[0].x, s.points[0].y, Math.max(1.5, (s.size || 3) / 2), 0, Math.PI * 2);
-          refCtx.fill();
-        } else if (s.points.length === 2) {
-          refCtx.beginPath();
-          refCtx.moveTo(s.points[0].x, s.points[0].y);
-          refCtx.lineTo(s.points[1].x, s.points[1].y);
-          refCtx.stroke();
-        } else {
-          refCtx.beginPath();
-          refCtx.moveTo(s.points[0].x, s.points[0].y);
-          for (let i = 1; i < s.points.length - 1; i++) {
-            const p1 = s.points[i];
-            const p2 = s.points[i + 1];
-            refCtx.quadraticCurveTo(p1.x, p1.y, (p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
-          }
-          const last = s.points[s.points.length - 1];
-          refCtx.lineTo(last.x, last.y);
-          refCtx.stroke();
-        }
-        refCtx.restore();
-      }
-
-      // 渲染对照页文本
-      for (const t of (p.texts || [])) {
-        refCtx.save();
-        const fontSize = Number(t.size) || 24;
-        const family = t.fontFamily || "'Noto Sans SC', sans-serif";
-        refCtx.font = `${t.bold ? 'bold' : 'normal'} ${fontSize}px ${family}`;
-        refCtx.fillStyle = t.color || '#18181b';
-        refCtx.fillText(t.text || '', t.x, t.y);
-        refCtx.restore();
-      }
-
-      refCtx.restore();
+      renderSceneOnContext(refCtx, dpr, false, {
+        strokes: p.strokes || [],
+        texts: p.texts || [],
+        images: p.images || [],
+        videos: []
+      });
     }
 
     function getRefCanvasCoordinates(e) {
@@ -4371,6 +4359,22 @@
       setTimeout(() => document.addEventListener('pointerdown', handleOutsideClick), 100);
     }
 
+    // 💨 喷枪颗粒生成 (每个采样点固定存储 sprayDots，重绘/双板/自动保存完全一致)
+    function generateSprayDots(cx, cy, radius) {
+      const dots = [];
+      const count = Math.round(Math.max(8, radius * 2.2));
+      for (let i = 0; i < count; i++) {
+        const r = Math.random() * radius * 1.5;
+        const theta = Math.random() * Math.PI * 2;
+        dots.push({
+          dx: Math.cos(theta) * r,
+          dy: Math.sin(theta) * r,
+          r: Math.random() < 0.25 ? 1.6 : 1.0
+        });
+      }
+      return dots;
+    }
+
     function renderLiveStrokeSegment(s, p1, p2) {
       ctx.save();
       ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -4618,7 +4622,7 @@
 
       pos.time = performance.now();
       pos.pressure = pressure;
-      if (appState.tool === 'spray' && typeof generateSprayDots === 'function') {
+      if (appState.tool === 'spray') {
         pos.sprayDots = generateSprayDots(pos.x, pos.y, strokeWidth);
       }
       
@@ -4705,7 +4709,7 @@
           }
           cPos.time = performance.now();
           cPos.pressure = (ce.pressure !== undefined && ce.pressure > 0) ? ce.pressure : 0.5;
-          if (currentStroke.tool === 'spray' && typeof generateSprayDots === 'function') {
+          if (currentStroke.tool === 'spray') {
             cPos.sprayDots = generateSprayDots(cPos.x, cPos.y, currentStroke.size);
           }
           currentStroke.points.push(cPos);
@@ -5364,16 +5368,25 @@
       }, 'image/png');
     }
 
+    function xmlEscape(v) {
+      return String(v == null ? '' : v)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+    }
+
     function generateVectorSVGString() {
       let pathsSvg = '';
       for (const s of appState.strokes) {
         if (s.isStamp) {
-          pathsSvg += `<text x="${s.x}" y="${s.y}" font-size="${s.size}" text-anchor="middle" dominant-baseline="middle">${s.stamp}</text>\n`;
+          pathsSvg += `<text x="${s.x}" y="${s.y}" font-size="${s.size}" text-anchor="middle" dominant-baseline="middle">${xmlEscape(s.stamp)}</text>\n`;
           continue;
         }
         if (!s.points || s.points.length === 0) continue;
         if (s.points.length === 1) {
-          pathsSvg += `<circle cx="${s.points[0].x}" cy="${s.points[0].y}" r="${s.size / 2}" fill="${s.color}" />\n`;
+          pathsSvg += `<circle cx="${s.points[0].x}" cy="${s.points[0].y}" r="${s.size / 2}" fill="${xmlEscape(s.color)}" />\n`;
           continue;
         }
         let d = `M ${s.points[0].x} ${s.points[0].y}`;
@@ -5384,11 +5397,11 @@
           const midY = (p1.y + p2.y) / 2;
           d += ` Q ${p1.x} ${p1.y} ${midX} ${midY}`;
         }
-        pathsSvg += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.size}" stroke-linecap="round" stroke-linejoin="round" />\n`;
+        pathsSvg += `<path d="${d}" fill="none" stroke="${xmlEscape(s.color)}" stroke-width="${s.size}" stroke-linecap="round" stroke-linejoin="round" />\n`;
       }
 
       for (const t of appState.texts) {
-        pathsSvg += `<text x="${t.x}" y="${t.y}" font-size="${t.size}" fill="${t.color}" font-weight="bold" font-family="sans-serif">${t.text}</text>\n`;
+        pathsSvg += `<text x="${Number(t.x) || 0}" y="${Number(t.y) || 0}" font-size="${Number(t.size) || 24}" fill="${xmlEscape(t.color || '#18181b')}" font-weight="${t.bold ? 'bold' : 'normal'}" font-family="sans-serif">${xmlEscape(t.text)}</text>\n`;
       }
 
       return `<?xml version="1.0" encoding="UTF-8"?>
@@ -5443,23 +5456,22 @@
 
       for (let i = 0; i < total; i++) {
         if (i > 0) pdf.addPage();
-        const p = appState.pages[i];
-        appState.strokes = p.strokes || [];
-        appState.texts = p.texts || [];
-        appState.images = p.images || [];
+        const p = appState.pages[i] || {};
+        // 只读渲染每一页，绝不改写 appState / pages (避免导出后页面内容被串改)
+        const scene = (i === originalPageIndex)
+          ? { strokes: appState.strokes, texts: appState.texts, images: appState.images, videos: appState.videos }
+          : { strokes: p.strokes || [], texts: p.texts || [], images: p.images || [], videos: [] };
 
         const offCanvas = document.createElement('canvas');
         offCanvas.width = Math.round(cssWidth * 2);
         offCanvas.height = Math.round(cssHeight * 2);
         const offCtx = offCanvas.getContext('2d');
-        redrawAllStrokes(offCtx, 2, false);
+        renderSceneOnContext(offCtx, 2, false, scene);
 
         const imgData = offCanvas.toDataURL('image/jpeg', 0.95);
         pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
       }
 
-      // 恢复原页面
-      loadPage(originalPageIndex);
       pdf.save(`KidsDraw-Comic-${Date.now()}.pdf`);
     }
 
