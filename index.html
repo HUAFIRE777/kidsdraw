@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
   <title id="pageTitle">Free Online Kids Drawing Canvas — Fun Crayons, Stamps & Safe Doodle Board | KidsDraw</title>
-  <meta name="description" content="Free, private online drawing canvas for kids, toddlers, and preschool artists. Features colorful crayons, cartoon stamps (dinosaurs, rockets, stars), warm ivory paper, and anti-accidental touch protection. 100% browser-based with instant 4K Ultra-HD export." />
-  <meta name="keywords" content="kids drawing online, free online drawing for kids, doodle board online, crayon drawing app, toddler drawing game, preschool art canvas, safe drawing no ads, children sketchpad" />
+  <meta name="description" content="100% ad-free, kid-safe online drawing and colouring board for kids, toddlers and preschoolers. Crayons, cartoon stamps, colouring pages with a magic fill that stays inside the lines, printable A4 pages and drawing replay. No sign-up, drawings stay in your browser." />
+  <meta name="keywords" content="kids drawing online, free online drawing for kids, doodle board online, crayon drawing app, toddler drawing game, preschool art canvas, ad-free kids drawing, kid-safe colouring pages, printable colouring pages, children sketchpad" />
   <meta name="author" content="EazyOPC" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="https://kidsdraw.eazyopc.com/" />
@@ -25,13 +25,13 @@
   <meta property="og:site_name" content="EazyOPC" />
   <meta property="og:url" content="https://kidsdraw.eazyopc.com/" />
   <meta property="og:title" content="Free Online Kids Drawing Canvas — Fun Crayons, Stamps & Safe Doodle Board | KidsDraw" />
-  <meta property="og:description" content="Free, private online drawing canvas for kids, toddlers, and preschool artists. Features colorful crayons, cartoon stamps (dinosaurs, rockets, stars), warm ivory paper, and anti-accidental touch protection. 100% browser-based with instant 4K Ultra-HD export." />
+  <meta property="og:description" content="100% ad-free, kid-safe online drawing and colouring board for kids, toddlers and preschoolers. Crayons, cartoon stamps, colouring pages with a magic fill that stays inside the lines, printable A4 pages and drawing replay. No sign-up, drawings stay in your browser." />
   <meta property="og:image" content="https://kidsdraw.eazyopc.com/favicon.svg" />
 
   <!-- Twitter Card Metadata -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Free Online Kids Drawing Canvas — Fun Crayons, Stamps & Safe Doodle Board | KidsDraw" />
-  <meta name="twitter:description" content="Free, private online drawing canvas for kids, toddlers, and preschool artists. Features colorful crayons, cartoon stamps (dinosaurs, rockets, stars), warm ivory paper, and anti-accidental touch protection. 100% browser-based with instant 4K Ultra-HD export." />
+  <meta name="twitter:description" content="100% ad-free, kid-safe online drawing and colouring board for kids, toddlers and preschoolers. Crayons, cartoon stamps, colouring pages with a magic fill that stays inside the lines, printable A4 pages and drawing replay. No sign-up, drawings stay in your browser." />
   <meta name="twitter:image" content="https://kidsdraw.eazyopc.com/favicon.svg" />
 
   <!-- Structured Data (Schema.org WebApplication + FAQPage) -->
@@ -75,6 +75,14 @@
           },
           {
             "@type": "Question",
+            "name": "Does KidsDraw show ads?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. KidsDraw is 100% ad-free and kid-safe for everyone, in both the free version and Pro. It loads no advertising, analytics or tracking scripts, and purchases, outside links and feedback emails sit behind a parental gate."
+            }
+          },
+          {
+            "@type": "Question",
             "name": "Can children use Apple Pencil or touch screens?",
             "acceptedAnswer": {
               "@type": "Answer",
@@ -100,7 +108,7 @@
   <link rel="alternate icon" href="/favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   
-  <!-- Google AdSense (Auto Ads; script injected at runtime for non-Pro users only) -->
+  <!-- AdSense account verification meta only. KidsDraw loads NO ad scripts (child-directed site, 100% ad-free). -->
   <meta name="google-adsense-account" content="ca-pub-6499357447763670" />
 
   <!-- Tailwind CSS & jsPDF CDN -->
@@ -869,7 +877,70 @@
       background: #4f46e5 !important;
       border-color: #4338ca !important;
     }
-    
+
+    /* ================= Round 4: 设计令牌 (间距 4/8/12/16/24 · 圆角 8/12/16/24 · 阴影 sm/md/lg) ================= */
+    :root {
+      --kd-space-1: 4px; --kd-space-2: 8px; --kd-space-3: 12px; --kd-space-4: 16px; --kd-space-5: 24px;
+      --kd-radius-sm: 8px; --kd-radius-md: 12px; --kd-radius-lg: 16px; --kd-radius-xl: 24px;
+      --kd-shadow-sm: 0 1px 2px rgba(0,0,0,.18);
+      --kd-shadow-md: 0 6px 18px rgba(0,0,0,.28);
+      --kd-shadow-lg: 0 18px 48px rgba(0,0,0,.42);
+      --kd-accent: #ec4899; --kd-accent-strong: #db2777; --kd-gold: #f59e0b;
+      --kd-surface: rgba(26, 17, 40, .92); --kd-surface-solid: #1c1330; --kd-surface-2: #261a3b;
+      --kd-border: rgba(255,255,255,.10); --kd-text: #f5f3ff; --kd-muted: #b9b1cc;
+      --kd-input-bg: #140c20; --kd-input-border: rgba(255,255,255,.18);
+      --kd-btn-h-sm: 32px; --kd-btn-h: 36px; --kd-btn-h-lg: 40px;
+    }
+    body.theme-light {
+      --kd-shadow-sm: 0 1px 2px rgba(15,23,42,.08);
+      --kd-shadow-md: 0 6px 18px rgba(15,23,42,.10);
+      --kd-shadow-lg: 0 18px 48px rgba(15,23,42,.16);
+      --kd-surface: rgba(255,255,255,.94); --kd-surface-solid: #ffffff; --kd-surface-2: #f8fafc;
+      --kd-border: #e2e8f0; --kd-text: #0f172a; --kd-muted: #334155;
+      --kd-input-bg: #ffffff; --kd-input-border: #334155;
+    }
+
+    /* 通用弹窗 (Round 4 新增弹窗统一使用)：头部 图标+标题+关闭 · 主体 · 底部按钮 */
+    .kd-modal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: var(--kd-space-4); background: rgba(8, 4, 14, .72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+    .kd-modal.hidden { display: none !important; }
+    .kd-modal-card { width: 100%; max-width: 420px; max-height: 92vh; overflow-y: auto; background: var(--kd-surface-solid); color: var(--kd-text); border: 1px solid var(--kd-border); border-radius: var(--kd-radius-xl); box-shadow: var(--kd-shadow-lg); padding: var(--kd-space-5); display: flex; flex-direction: column; gap: var(--kd-space-4); animation: kdPop .15s ease-out; }
+    .kd-modal-card.kd-wide { max-width: 760px; }
+    .kd-modal-head { display: flex; align-items: center; gap: var(--kd-space-3); padding-bottom: var(--kd-space-3); border-bottom: 1px solid var(--kd-border); }
+    .kd-modal-icon { width: 36px; height: 36px; flex-shrink: 0; border-radius: var(--kd-radius-md); display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--kd-surface-2); border: 1px solid var(--kd-border); }
+    .kd-modal-title { font-size: 15px; font-weight: 800; line-height: 1.3; margin: 0; color: var(--kd-text); }
+    .kd-modal-sub { font-size: 12px; color: var(--kd-muted); margin: 2px 0 0; line-height: 1.5; }
+    .kd-modal-close { margin-left: auto; width: 32px; height: 32px; border-radius: var(--kd-radius-sm); display: flex; align-items: center; justify-content: center; color: var(--kd-muted); background: transparent; border: 0; cursor: pointer; font-size: 16px; }
+    .kd-modal-close:hover { background: var(--kd-surface-2); color: var(--kd-text); }
+    .kd-modal-body { display: flex; flex-direction: column; gap: var(--kd-space-3); font-size: 13px; line-height: 1.6; }
+    .kd-modal-foot { display: flex; gap: var(--kd-space-2); justify-content: flex-end; flex-wrap: wrap; }
+    .kd-btn { height: var(--kd-btn-h); padding: 0 var(--kd-space-4); border-radius: var(--kd-radius-md); font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; border: 1px solid var(--kd-border); background: var(--kd-surface-2); color: var(--kd-text); transition: background .15s, transform .1s; }
+    .kd-btn:hover { filter: brightness(1.08); }
+    .kd-btn:active { transform: scale(.97); }
+    .kd-btn:disabled { opacity: .45; cursor: not-allowed; }
+    .kd-btn-sm { height: var(--kd-btn-h-sm); padding: 0 var(--kd-space-3); font-size: 12px; }
+    .kd-btn-lg { height: var(--kd-btn-h-lg); }
+    .kd-btn-primary { background: linear-gradient(135deg, var(--kd-accent), var(--kd-accent-strong)); border-color: transparent; color: #fff; }
+    .kd-btn-ghost { background: transparent; }
+    .kd-btn.is-active { background: var(--kd-accent); border-color: var(--kd-accent); color: #fff; }
+    body.theme-light .kd-btn-primary { background: #0f172a; color: #ffffff; border-color: #0f172a; }
+    body.theme-light .kd-btn.is-active { background: #0f172a; border-color: #0f172a; color: #ffffff; }
+    body.theme-light .kd-modal { background: rgba(15, 23, 42, .45); }
+    body.theme-light .kd-modal-card, body.theme-light .kd-modal-card p, body.theme-light .kd-modal-card span, body.theme-light .kd-modal-card label, body.theme-light .kd-modal-card li, body.theme-light .kd-modal-card div { font-weight: 700; }
+    body.theme-light .kd-modal-title { font-weight: 800; }
+    .kd-input { height: var(--kd-btn-h-lg); width: 100%; padding: 0 var(--kd-space-3); border-radius: var(--kd-radius-md); background: var(--kd-input-bg); color: var(--kd-text); border: 1.5px solid var(--kd-input-border); font-size: 15px; font-weight: 700; outline: none; }
+    .kd-input:focus { border-color: var(--kd-accent); box-shadow: 0 0 0 3px rgba(236,72,153,.25); }
+    .kd-kbd { display: inline-block; min-width: 22px; padding: 1px 6px; border-radius: 6px; border: 1px solid var(--kd-border); background: var(--kd-surface-2); font: 700 11px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; text-align: center; color: var(--kd-text); }
+    .kd-error { color: #f43f5e; font-size: 12px; font-weight: 700; min-height: 18px; }
+    body.theme-light .kd-error { color: #be123c; }
+    :is(.kd-btn, .kd-modal-close, .tool-btn, #leftSidebar button, header button):focus-visible { outline: 2px solid var(--kd-accent); outline-offset: 2px; }
+    @keyframes kdPop { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+    @media (prefers-reduced-motion: reduce) {
+      .kd-modal-card { animation: none; }
+      .kd-btn { transition: none; }
+    }
+
+    /* 家长验证 (Parental gate) */
+    .kd-gate-question { font-size: 28px; font-weight: 900; text-align: center; letter-spacing: .02em; padding: var(--kd-space-3); border-radius: var(--kd-radius-lg); background: var(--kd-surface-2); border: 1px solid var(--kd-border); color: var(--kd-text); }
 </style>
   <!-- Open-Source Typography (Google Fonts) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1606,6 +1677,9 @@
       <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-semibold">
         <span>⚡ 专为少儿美育、亲子涂鸦与绘画启蒙打造的纯净趣味画板</span>
       </div>
+      <div class="flex justify-center">
+        <span id="adFreeBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-bold" data-i18n="adfree_badge">🛡️ 完全无广告 · 儿童安全</span>
+      </div>
       <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">极简直观，兼具工业级创作与分镜排版能力</h2>
       <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
         告别冗重软件与广告侵扰，内置护眼米黄画纸、天然蜡笔、斜头糖果马克笔与趣味简笔画线稿底卡，100% 浏览器客户端纯净安全运行。
@@ -2090,8 +2164,9 @@
         <span>·</span>
         <a href="https://comicboard.eazyopc.com" target="_blank" class=" hover:text-pink-400 transition flex items-center gap-1">🎨 <span>漫画分镜板</span></a>
       </div>
-      <div class="text-[11px] text-slate-500">
-        © 2026 EazyOPC. All Rights Reserved. 独立开发者出品 · 100% 浏览器客户端本地计算 · 零数据上云
+      <div class="text-[11px] text-slate-500 flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+        <a id="footerPrivacyLink" href="/privacy.html" class="font-semibold text-slate-300 hover:text-pink-400 underline underline-offset-2" data-i18n="footer_privacy">隐私政策 · 家长须知</a>
+        <span>© 2026 EazyOPC. All Rights Reserved. 独立开发者出品 · 100% 完全无广告 · 画作只保存在本机浏览器</span>
       </div>
     </div>
   </footer>
@@ -2416,19 +2491,33 @@
 
   
 
+  <!-- ================= Round 4: 家长验证 (购买 / 外部链接 / 发邮件前必须答对一道算术题) ================= -->
+  <div id="parentGateModal" class="kd-modal hidden" role="dialog" aria-modal="true" aria-labelledby="parentGateTitle">
+    <form id="parentGateForm" class="kd-modal-card" autocomplete="off" novalidate>
+      <div class="kd-modal-head">
+        <div class="kd-modal-icon" aria-hidden="true">👨‍👩‍👧</div>
+        <div>
+          <h3 id="parentGateTitle" class="kd-modal-title" data-i18n="gate_title">请家长来确认一下</h3>
+          <p class="kd-modal-sub" data-i18n="gate_desc">接下来要付款、打开其他网站或发送邮件，需要家长答对这道题才能继续。</p>
+        </div>
+        <button type="button" id="btnCloseParentGate" class="kd-modal-close" aria-label="Close">✕</button>
+      </div>
+      <div class="kd-modal-body">
+        <div id="parentGateQuestion" class="kd-gate-question">7 × 8 = ?</div>
+        <label for="parentGateInput" class="kd-modal-sub" data-i18n="gate_input_label">请输入答案（数字）</label>
+        <input id="parentGateInput" class="kd-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" />
+        <div id="parentGateError" class="kd-error" aria-live="polite"></div>
+      </div>
+      <div class="kd-modal-foot">
+        <button type="button" id="btnCancelParentGate" class="kd-btn kd-btn-ghost" data-i18n="gate_cancel">取消</button>
+        <button type="submit" id="btnSubmitParentGate" class="kd-btn kd-btn-primary" data-i18n="gate_submit">确认继续</button>
+      </div>
+    </form>
+  </div>
+
   <!-- ================= 9. 核心商业绘图与矢量运算引擎 ================= -->
   <script>
-    // 📢 AdSense Auto Ads: only inject for non-Pro users (Pro users never load ad scripts)
-    (function injectAutoAds() {
-      try {
-        if (window.EazyPro ? EazyPro.isPro() : localStorage.getItem('eazyopc_pro_unlocked') === 'true') return;
-      } catch (_) {}
-      const ads = document.createElement('script');
-      ads.async = true;
-      ads.crossOrigin = 'anonymous';
-      ads.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6499357447763670';
-      document.head.appendChild(ads);
-    })();
+    // 🚫 KidsDraw 是儿童向网站：全站不加载任何广告或统计追踪脚本（免费版与 Pro 版都一样）。
 
     const TRANSLATIONS = {
       zh: {
@@ -5940,7 +6029,7 @@
         exportImageCanvas(1.5, true, false);
       } else {
         if (!appState.isPro) {
-          document.getElementById('proModal').classList.remove('hidden');
+          openProModal();
           return;
         }
         exportModal.classList.add('hidden');
@@ -6650,7 +6739,13 @@
     const btnTopProBadge = document.getElementById('btnTopProBadge');
     const proModal = document.getElementById('proModal');
     const btnCloseProModal = document.getElementById('btnCloseProModal');
-    if (btnTopProBadge && proModal) btnTopProBadge.onclick = () => proModal.classList.remove('hidden');
+    // 👨‍👩‍👧 儿童站合规：打开购买弹窗前必须先通过家长验证 (家长验证模块见文件末尾 KDParentGate)
+    function openProModal() {
+      const show = () => { const m = document.getElementById('proModal'); if (m) m.classList.remove('hidden'); };
+      if (window.KDParentGate) window.KDParentGate.require(show); else show();
+    }
+    window.openProModal = openProModal;
+    if (btnTopProBadge && proModal) btnTopProBadge.onclick = () => openProModal();
     if (btnCloseProModal && proModal) btnCloseProModal.onclick = () => proModal.classList.add('hidden');
 
     window.addEventListener('resize', resizeCanvas);
@@ -7336,7 +7431,8 @@
 
     if (btnOpenFeedbackModal && feedbackModal) {
       btnOpenFeedbackModal.onclick = () => {
-        feedbackModal.classList.remove('hidden');
+        const show = () => feedbackModal.classList.remove('hidden');
+        if (window.KDParentGate) window.KDParentGate.require(show); else show();
       };
     }
     if (btnCloseFeedbackModal && feedbackModal) {
@@ -7366,13 +7462,17 @@
         const bodyText = `反馈类型: ${type}\n联系方式: ${contact || '未提供'}\n建议内容:\n${content}\n\n-- 来自用户在 EazyOPC 网站的留言`;
         const mailtoUrl = `mailto:${creatorSocials.email}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
 
-        // 同步复制到剪贴板，方便 Web 邮箱用户
-        navigator.clipboard.writeText(`收件人: ${creatorSocials.email}\n主题: 【EazyOPC 画板建议】${type}\n\n${bodyText}`).catch(() => {});
-
-        window.open(mailtoUrl, '_blank');
-        showCreatorToast('🎉 邮件已生成！已直发至作者邮箱 (huafire777@gmail.com)，感谢您的宝贵建议！');
-        feedbackForm.reset();
-        feedbackModal.classList.add('hidden');
+        const sendMail = () => {
+          // 同步复制到剪贴板，方便 Web 邮箱用户
+          try { navigator.clipboard.writeText(`收件人: ${creatorSocials.email}\n主题: 【EazyOPC 画板建议】${type}\n\n${bodyText}`).catch(() => {}); } catch (_) {}
+          window.open(mailtoUrl, '_blank');
+          const fd = TRANSLATIONS[appState.lang] || TRANSLATIONS.zh;
+          showCreatorToast(fd.feedback_mail_opened || TRANSLATIONS.zh.feedback_mail_opened || '📧 已打开邮件应用，请在邮件里点「发送」。');
+          feedbackForm.reset();
+          feedbackModal.classList.add('hidden');
+        };
+        // 👨‍👩‍👧 发邮件前必须通过家长验证
+        if (window.KDParentGate) window.KDParentGate.require(sendMail); else sendMail();
       };
     }
 
@@ -7769,6 +7869,154 @@
       }
     };
 
+  </script>
+  <!-- ================= Round 4: 儿童合规 · 家长验证 · 文件保存/打开 · 打印 · 音效 · 涂色卡库 · 印章包 · 作画回放 ================= -->
+  <script id="kdRound4Script">
+    // ---------- i18n：Round 4 新增文案 (zh + en，其它语言回退到 en，最终回退 zh) ----------
+    const KD_R4_I18N = {
+      zh: {
+        gate_title: '请家长来确认一下',
+        gate_desc: '接下来要付款、打开其他网站或发送邮件，需要家长答对这道题才能继续。',
+        gate_input_label: '请输入答案（数字）',
+        gate_cancel: '取消',
+        gate_submit: '确认继续',
+        gate_wrong: '答案不对，换一道题再试试。',
+        gate_empty: '请先输入答案。',
+        feedback_mail_opened: '📧 已打开邮件应用，请在邮件里点「发送」。感谢你的建议！',
+        footer_privacy: '隐私政策 · 家长须知',
+        adfree_badge: '🛡️ 完全无广告 · 儿童安全'
+      },
+      en: {
+        gate_title: 'Grown-ups only',
+        gate_desc: 'You are about to pay, open another website or send an email. A parent needs to answer this question to continue.',
+        gate_input_label: 'Type the answer (numbers only)',
+        gate_cancel: 'Cancel',
+        gate_submit: 'Continue',
+        gate_wrong: 'Not quite — here is a new question.',
+        gate_empty: 'Please type the answer first.',
+        feedback_mail_opened: '📧 Your email app is open — press “Send” there. Thanks for the feedback!',
+        footer_privacy: 'Privacy policy · For parents',
+        adfree_badge: '🛡️ 100% ad-free · kid-safe'
+      }
+    };
+    (function mergeR4I18n() {
+      Object.keys(TRANSLATIONS).forEach((lang) => {
+        const src = KD_R4_I18N[lang] || KD_R4_I18N.en;
+        const dst = TRANSLATIONS[lang];
+        Object.keys(KD_R4_I18N.zh).forEach((k) => {
+          if (dst[k] === undefined) dst[k] = (src[k] !== undefined ? src[k] : (KD_R4_I18N.en[k] !== undefined ? KD_R4_I18N.en[k] : KD_R4_I18N.zh[k]));
+        });
+      });
+    })();
+    function kdT(key, vars) {
+      const d = TRANSLATIONS[appState.lang] || TRANSLATIONS.zh;
+      let v = d[key];
+      if (v === undefined) v = TRANSLATIONS.zh[key];
+      if (v === undefined) v = key;
+      if (vars) Object.keys(vars).forEach((k) => { v = String(v).split('{' + k + '}').join(vars[k]); });
+      return v;
+    }
+    function kdEscape(str) {
+      return String(str == null ? '' : str).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    // 统一的轻量提示 (复用 showCreatorToast，文本先转义)
+    function kdToast(text, duration) {
+      if (typeof showCreatorToast === 'function') showCreatorToast(kdEscape(text), duration || 3200);
+    }
+
+    // ---------- 👨‍👩‍👧 家长验证 (Parental gate) ----------
+    // 付款 / 外部链接 / 发送邮件之前弹出随机乘法题，答对才继续。答对后 2 分钟内不再重复询问。
+    window.KDParentGate = (function () {
+      const PASS_WINDOW_MS = 2 * 60 * 1000;
+      let passedAt = 0;
+      let pending = null;
+      let answer = null;
+      const modal = document.getElementById('parentGateModal');
+      const form = document.getElementById('parentGateForm');
+      const qEl = document.getElementById('parentGateQuestion');
+      const input = document.getElementById('parentGateInput');
+      const err = document.getElementById('parentGateError');
+
+      function newQuestion() {
+        const a = 3 + Math.floor(Math.random() * 7); // 3..9
+        const b = 4 + Math.floor(Math.random() * 6); // 4..9
+        answer = a * b;
+        if (qEl) qEl.textContent = `${a} × ${b} = ?`;
+        if (input) input.value = '';
+      }
+      function isFresh() { return Date.now() - passedAt < PASS_WINDOW_MS; }
+      function close() {
+        if (modal) modal.classList.add('hidden');
+        pending = null;
+      }
+      function open() {
+        newQuestion();
+        if (err) err.textContent = '';
+        if (modal) modal.classList.remove('hidden');
+        setTimeout(() => { try { input && input.focus(); } catch (_) {} }, 30);
+      }
+      function require(cb) {
+        if (isFresh()) { cb(); return; }
+        pending = cb;
+        open();
+      }
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const raw = (input && input.value || '').trim();
+          if (!raw) { if (err) err.textContent = kdT('gate_empty'); return; }
+          if (Number(raw) === answer) {
+            passedAt = Date.now();
+            const cb = pending;
+            pending = null;
+            if (modal) modal.classList.add('hidden');
+            if (cb) cb(); // 仍在同一次用户点击/回车中执行，window.open 不会被拦截
+          } else {
+            if (err) err.textContent = kdT('gate_wrong');
+            newQuestion();
+            try { input && input.focus(); } catch (_) {}
+          }
+        });
+      }
+      const btnX = document.getElementById('btnCloseParentGate');
+      const btnCancel = document.getElementById('btnCancelParentGate');
+      if (btnX) btnX.onclick = close;
+      if (btnCancel) btnCancel.onclick = close;
+      if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) close();
+      });
+      return { require, isFresh, open, close };
+    })();
+
+    // 所有指向其他网站的链接 (社交账号、站群矩阵、Canva/Figma、Creem 付款) 与 mailto: 都先过家长验证
+    function kdIsGatedLink(a) {
+      if (!a || !a.getAttribute) return false;
+      const href = a.getAttribute('href') || '';
+      if (!href || href.charAt(0) === '#' || /^javascript:/i.test(href)) return false;
+      if (a.hasAttribute('download')) return false;
+      if (/^(mailto|tel|sms):/i.test(href)) return true;
+      let url;
+      try { url = new URL(href, location.href); } catch (_) { return false; }
+      if (!/^https?:$/.test(url.protocol)) return false;
+      return url.hostname !== location.hostname;
+    }
+    document.addEventListener('click', (e) => {
+      if (e.defaultPrevented || e.button > 0) return;
+      const a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+      if (!kdIsGatedLink(a) || window.KDParentGate.isFresh()) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const href = a.href;
+      const newTab = (a.getAttribute('target') || '').toLowerCase() === '_blank' || e.metaKey || e.ctrlKey;
+      window.KDParentGate.require(() => {
+        if (newTab) window.open(href, '_blank', 'noopener');
+        else location.href = href;
+      });
+    }, true);
+
+    // 新增文案在语言切换后同步 (initAppOnLoad 之后若已初始化，立即重刷一次)
+    if (typeof setLanguage === 'function' && document.readyState !== 'loading') setLanguage(appState.lang || 'zh');
   </script>
 </body>
 </html>
