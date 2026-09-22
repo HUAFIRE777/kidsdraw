@@ -941,6 +941,75 @@
     body.theme-light .selection-action-pill button:hover {
       background: #f1f5f9 !important;
     }
+    /* 🌟 白天模式弹窗超高清晰黑体字 (WCAG AAA 极致对比度) */
+    body.theme-light #proModal .bg-slate-900,
+    body.theme-light #exportModal .bg-slate-900,
+    body.theme-light #restoreModal .bg-slate-900 {
+      background: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.2) !important;
+    }
+    body.theme-light #proModal h3,
+    body.theme-light #exportModal h3,
+    body.theme-light #restoreModal h3 {
+      color: #0f172a !important;
+      font-weight: 800 !important;
+    }
+    body.theme-light #proModal p,
+    body.theme-light #exportModal p,
+    body.theme-light #restoreModal p {
+      color: #334155 !important;
+      font-weight: 600 !important;
+    }
+    body.theme-light #proModal .bg-slate-800\/80,
+    body.theme-light #proModal .bg-slate-800\/90,
+    body.theme-light #proModal .bg-slate-800,
+    body.theme-light #exportModal .bg-slate-800\/80,
+    body.theme-light #exportModal .bg-slate-800,
+    body.theme-light #restoreModal .bg-slate-800\/80,
+    body.theme-light #restoreModal .bg-slate-800 {
+      background: #f8fafc !important;
+      border: 1.5px solid #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    body.theme-light #proModal .bg-slate-800\/80 span,
+    body.theme-light #proModal .bg-slate-800\/80 strong,
+    body.theme-light #proModal .bg-slate-800 span,
+    body.theme-light #proModal .bg-slate-800 strong {
+      color: #0f172a !important;
+      font-weight: 700 !important;
+    }
+    body.theme-light #proModal input,
+    body.theme-light #exportModal input,
+    body.theme-light #restoreModal input {
+      background: #ffffff !important;
+      border: 1.5px solid #cbd5e1 !important;
+      color: #0f172a !important;
+      font-weight: 600 !important;
+    }
+    body.theme-light #proModal input::placeholder,
+    body.theme-light #restoreModal input::placeholder {
+      color: #64748b !important;
+    }
+    body.theme-light #proModal #btnVerifyLicense,
+    body.theme-light #restoreModal #btnConfirmRestore {
+      background: #0f172a !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+    }
+    body.theme-light #proModal #btnVerifyLicense:hover,
+    body.theme-light #restoreModal #btnConfirmRestore:hover {
+      background: #334155 !important;
+    }
+    body.theme-light #proModal #btnCloseProModal,
+    body.theme-light #restoreModal #btnCloseRestoreModal {
+      color: #475569 !important;
+      font-weight: 600 !important;
+    }
+    body.theme-light #proModal #btnCloseProModal:hover {
+      color: #0f172a !important;
+    }
 
   
     /* ================= 100 站矩阵与紧凑胶囊白天模式强化 ================= */
@@ -1554,24 +1623,14 @@
     </div>
 
     <!-- 舞台容器：支持单画板或双板并排同时编辑 -->
-    <div id="artboardStage" class="flex items-center justify-center gap-4 transition-all origin-center">
-      <!-- 对照页/参考画板 (支持双板同时书写绘图，自动同步与加页) -->
-      <div id="referenceCanvasCard" class="hidden relative rounded-2xl shadow-2xl ring-1 ring-slate-800 overflow-hidden flex flex-col items-center justify-center transition-transform bg-[#fffdf2] origin-center">
-        <div class="w-full bg-slate-900/90 border-b border-slate-700/80 px-2.5 py-1 flex items-center justify-between text-xs text-slate-300">
-          <div class="flex items-center gap-1.5 font-bold text-[11px]">
-            <span class="text-amber-400">📖</span>
-            <span id="refPageTitle">对照画板 (双板可编辑)</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <select id="refPageSelect" class="bg-slate-800 border border-slate-700 text-slate-200 rounded px-1.5 py-0.5 text-[10px] outline-none">
-            </select>
-            <button id="btnCloseDualView" class="p-0.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="关闭双板模式">✕</button>
-          </div>
-        </div>
-        <canvas id="referenceCanvas" class="cursor-crosshair"></canvas>
+    <div id="artboardStage" class="flex items-center justify-center gap-4 transition-all max-w-full">
+      <!-- 📄 左侧交互画板 (第 1 页，双板模式) -->
+      <div id="referenceCanvasCard" class="hidden relative rounded-2xl shadow-2xl ring-1 ring-slate-800 overflow-hidden flex items-center justify-center bg-[#fffdf2] origin-center">
+        <canvas id="referenceCanvas" class="cursor-crosshair touch-none"></canvas>
+        <div class="absolute bottom-2 left-3 px-2 py-0.5 rounded-md bg-stone-900/60 text-[10px] text-amber-300 font-mono select-none pointer-events-none border border-slate-700/50 backdrop-blur-sm">第 1 页</div>
       </div>
 
-      <!-- 真实护眼米黄纸张卡片 -->
+      <!-- 真实护眼米黄纸张卡片 (第 2 页，单板模式为默认主画板) -->
       <div id="canvasCard" class="relative rounded-2xl shadow-2xl ring-1 ring-slate-800 overflow-hidden flex items-center justify-center transition-transform bg-[#fffdf2] origin-center">
         <!-- 视频图层渲染容器 (置于主画布下方，支持在视频上方直接涂鸦批注) -->
         <div id="videoLayerContainer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
@@ -1579,6 +1638,7 @@
         <div id="laserLayer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
         <div id="stickyLayer" class="absolute inset-0 pointer-events-none"></div>
         <div id="selectionOverlay" class="absolute inset-0 pointer-events-none"></div>
+        <div id="rightPageBadge" class="hidden absolute bottom-2 right-3 px-2 py-0.5 rounded-md bg-stone-900/60 text-[10px] text-amber-300 font-mono select-none pointer-events-none border border-slate-700/50 backdrop-blur-sm">第 2 页</div>
       </div>
     </div>
   </main>
@@ -3229,7 +3289,7 @@
       const refCanvas = document.getElementById('referenceCanvas');
       if (refCard && refCanvas) {
         refCard.style.width = `${cssWidth}px`;
-        refCard.style.height = `${cssHeight + 36}px`;
+        refCard.style.height = `${cssHeight}px`;
         refCanvas.width = Math.round(cssWidth * dpr);
         refCanvas.height = Math.round(cssHeight * dpr);
         refCanvas.style.width = `${cssWidth}px`;
@@ -4090,110 +4150,6 @@
     let isRefDrawing = false;
     let currentRefStroke = null;
 
-    function setupWritableDualBoard() {
-      const refCanvas = document.getElementById('referenceCanvas');
-      if (!refCanvas || refCanvas._bound) return;
-      refCanvas._bound = true;
-
-      refCanvas.addEventListener('pointerdown', (e) => {
-        closeAllFlyouts();
-        e.preventDefault();
-        const pos = getRefCanvasCoordinates(e);
-        const refIdx = appState.referencePageIndex !== undefined ? appState.referencePageIndex : (appState.currentPageIndex > 0 ? appState.currentPageIndex - 1 : 0);
-        const p = appState.pages[refIdx];
-        if (!p) return;
-        if (!p.strokes) p.strokes = [];
-        if (!p.history) p.history = [];
-        p.history.push(JSON.parse(JSON.stringify(p.strokes)));
-        if (p.history.length > 30) p.history.shift();
-
-        isRefDrawing = true;
-        currentRefStroke = {
-          id: Date.now() + Math.random(),
-          tool: appState.tool,
-          color: appState.currentColor,
-          size: Number(appState.brushSize) || 3,
-          points: [pos]
-        };
-        p.strokes.push(currentRefStroke);
-
-        const refCtx = refCanvas.getContext('2d');
-        refCtx.save();
-        refCtx.setTransform(1, 0, 0, 1, 0, 0);
-        refCtx.scale(dpr, dpr);
-        refCtx.fillStyle = currentRefStroke.color;
-        refCtx.beginPath();
-        refCtx.arc(pos.x, pos.y, Math.max(1, currentRefStroke.size / 2), 0, Math.PI * 2);
-        refCtx.fill();
-        refCtx.restore();
-      });
-
-      refCanvas.addEventListener('pointermove', (e) => {
-        if (!isRefDrawing || !currentRefStroke) return;
-        e.preventDefault();
-        const pos = getRefCanvasCoordinates(e);
-        const pts = currentRefStroke.points;
-        if (pts.length > 0) {
-          const last = pts[pts.length - 1];
-          if (Math.hypot(pos.x - last.x, pos.y - last.y) < 2) return;
-        }
-        pos.time = performance.now();
-        pts.push(pos);
-
-        const refCtx = refCanvas.getContext('2d');
-        refCtx.save();
-        refCtx.setTransform(1, 0, 0, 1, 0, 0);
-        refCtx.scale(dpr, dpr);
-        refCtx.strokeStyle = currentRefStroke.color;
-        refCtx.lineCap = 'round';
-        refCtx.lineJoin = 'round';
-        refCtx.lineWidth = currentRefStroke.size;
-
-        if (pts.length >= 3) {
-          const p0 = pts[pts.length - 3], pA = pts[pts.length - 2], pB = pts[pts.length - 1];
-          refCtx.beginPath();
-          refCtx.moveTo((p0.x + pA.x)/2, (p0.y + pA.y)/2);
-          refCtx.quadraticCurveTo(pA.x, pA.y, (pA.x + pB.x)/2, (pA.y + pB.y)/2);
-          refCtx.stroke();
-        } else if (pts.length === 2) {
-          refCtx.beginPath();
-          refCtx.moveTo(pts[0].x, pts[0].y);
-          refCtx.lineTo(pts[1].x, pts[1].y);
-          refCtx.stroke();
-        }
-        refCtx.restore();
-      });
-
-      const onRefUp = () => {
-        if (isRefDrawing) {
-          isRefDrawing = false;
-          currentRefStroke = null;
-          renderReferenceBoard();
-        }
-      };
-      refCanvas.addEventListener('pointerup', onRefUp);
-      refCanvas.addEventListener('pointerleave', onRefUp);
-    }
-
-    function toggleDualSpreadView() {
-      if (appState.pages.length <= 1 && !appState.isDualSpread) {
-        addNewPage();
-      }
-      appState.isDualSpread = !appState.isDualSpread;
-      const btn = document.getElementById('btnToggleDualView');
-      const lbl = document.getElementById('lblDualView');
-      if (btn && lbl) {
-        if (appState.isDualSpread) {
-          btn.className = 'flex items-center gap-1 px-2.5 py-1 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg transition active:scale-95';
-          lbl.innerText = '单板模式';
-        } else {
-          btn.className = 'flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-semibold shadow transition active:scale-95';
-          lbl.innerText = '双板并排';
-        }
-      }
-      resizeCanvas();
-    }
-
     function renderReferenceBoard() {
       const refCard = document.getElementById('referenceCanvasCard');
       const refCanvas = document.getElementById('referenceCanvas');
@@ -4207,25 +4163,8 @@
       refCard.classList.remove('hidden');
       refCard.style.display = 'flex';
 
-      const refSelect = document.getElementById('refPageSelect');
-      if (refSelect) {
-        refSelect.innerHTML = '';
-        appState.pages.forEach((p, idx) => {
-          const opt = document.createElement('option');
-          opt.value = idx;
-          opt.innerText = `第 ${idx + 1} 页${idx === appState.currentPageIndex ? ' (当前)' : ''}`;
-          if (idx === appState.referencePageIndex) opt.selected = true;
-          refSelect.appendChild(opt);
-        });
-      }
-
-      let refIdx = appState.referencePageIndex;
-      if (refIdx >= appState.pages.length) refIdx = appState.pages.length - 1;
-      if (refIdx === appState.currentPageIndex) {
-        refIdx = appState.currentPageIndex > 0 ? appState.currentPageIndex - 1 : (appState.pages.length > 1 ? 1 : 0);
-      }
-      appState.referencePageIndex = refIdx;
-      if (refSelect) refSelect.value = refIdx;
+      const refIdx = 0; // 左侧画板固定为第 1 页
+      appState.referencePageIndex = 0;
 
       const p = appState.pages[refIdx];
       if (!p) return;
@@ -4301,6 +4240,173 @@
       }
 
       refCtx.restore();
+    }
+
+    function getRefCanvasCoordinates(e) {
+      const refCanvas = document.getElementById('referenceCanvas');
+      if (!refCanvas) return { x: 0, y: 0 };
+      const rect = refCanvas.getBoundingClientRect();
+      const scaleX = cssWidth / (rect.width || 1);
+      const scaleY = cssHeight / (rect.height || 1);
+      return {
+        x: Math.max(0, Math.min(cssWidth, (e.clientX - rect.left) * scaleX)),
+        y: Math.max(0, Math.min(cssHeight, (e.clientY - rect.top) * scaleY))
+      };
+    }
+
+    function setupWritableDualBoard() {
+      const refCanvas = document.getElementById('referenceCanvas');
+      if (!refCanvas || refCanvas._bound) return;
+      refCanvas._bound = true;
+
+      function eraseOnLeftPage(pos) {
+        const p = appState.pages[0];
+        if (!p || !p.strokes) return;
+        const r = Math.max(12, (Number(appState.brushSize) || 8) * 1.5);
+        p.strokes = p.strokes.filter(s => {
+          if (!s.points) return true;
+          return !s.points.some(pt => Math.hypot(pt.x - pos.x, pt.y - pos.y) <= r);
+        });
+      }
+
+      refCanvas.addEventListener('pointerdown', (e) => {
+        closeAllFlyouts();
+        e.preventDefault();
+        const pos = getRefCanvasCoordinates(e);
+        const p = appState.pages[0]; // 左板固定绘制到第 1 页
+        if (!p) return;
+        if (!p.strokes) p.strokes = [];
+        if (!p.history) p.history = [];
+        p.history.push(JSON.parse(JSON.stringify(p.strokes)));
+        if (p.history.length > 30) p.history.shift();
+
+        if (appState.tool === 'eraser') {
+          isRefDrawing = true;
+          eraseOnLeftPage(pos);
+          renderReferenceBoard();
+          return;
+        }
+
+        isRefDrawing = true;
+        currentRefStroke = {
+          id: Date.now() + Math.random(),
+          tool: appState.tool,
+          color: appState.currentColor,
+          size: Number(appState.brushSize) || 3,
+          points: [pos]
+        };
+        p.strokes.push(currentRefStroke);
+
+        const refCtx = refCanvas.getContext('2d');
+        refCtx.save();
+        refCtx.setTransform(1, 0, 0, 1, 0, 0);
+        refCtx.scale(dpr, dpr);
+        refCtx.fillStyle = currentRefStroke.color;
+        refCtx.beginPath();
+        refCtx.arc(pos.x, pos.y, Math.max(1, currentRefStroke.size / 2), 0, Math.PI * 2);
+        refCtx.fill();
+        refCtx.restore();
+      });
+
+      refCanvas.addEventListener('pointermove', (e) => {
+        if (!isRefDrawing) return;
+        e.preventDefault();
+        const pos = getRefCanvasCoordinates(e);
+
+        if (appState.tool === 'eraser') {
+          eraseOnLeftPage(pos);
+          renderReferenceBoard();
+          return;
+        }
+
+        if (!currentRefStroke) return;
+        const pts = currentRefStroke.points;
+        if (pts.length > 0) {
+          const last = pts[pts.length - 1];
+          if (Math.hypot(pos.x - last.x, pos.y - last.y) < 2) return;
+        }
+        pos.time = performance.now();
+        pts.push(pos);
+
+        const refCtx = refCanvas.getContext('2d');
+        refCtx.save();
+        refCtx.setTransform(1, 0, 0, 1, 0, 0);
+        refCtx.scale(dpr, dpr);
+        refCtx.strokeStyle = currentRefStroke.color;
+        refCtx.lineCap = 'round';
+        refCtx.lineJoin = 'round';
+        refCtx.lineWidth = currentRefStroke.size;
+
+        if (pts.length >= 3) {
+          const p0 = pts[pts.length - 3], pA = pts[pts.length - 2], pB = pts[pts.length - 1];
+          refCtx.beginPath();
+          refCtx.moveTo((p0.x + pA.x)/2, (p0.y + pA.y)/2);
+          refCtx.quadraticCurveTo(pA.x, pA.y, (pA.x + pB.x)/2, (pA.y + pB.y)/2);
+          refCtx.stroke();
+        } else if (pts.length === 2) {
+          refCtx.beginPath();
+          refCtx.moveTo(pts[0].x, pts[0].y);
+          refCtx.lineTo(pts[1].x, pts[1].y);
+          refCtx.stroke();
+        }
+        refCtx.restore();
+      });
+
+      const onRefUp = () => {
+        if (isRefDrawing) {
+          isRefDrawing = false;
+          currentRefStroke = null;
+          renderReferenceBoard();
+        }
+      };
+      refCanvas.addEventListener('pointerup', onRefUp);
+      refCanvas.addEventListener('pointerleave', onRefUp);
+    }
+
+    function toggleDualSpreadView() {
+      if (appState.isDualSpread) {
+        // === 切换单板模式 (用户要求：切换单板模式就是默认第一页) ===
+        saveCurrentPageState();
+        appState.isDualSpread = false;
+        loadPage(0);
+      } else {
+        // === 开启双板模式 (左板第 1 页，右板第 2 页，两页都可以画) ===
+        saveCurrentPageState();
+        if (appState.pages.length <= 1) {
+          appState.pages.push({
+            id: Date.now(),
+            strokes: [],
+            texts: [],
+            images: [],
+            history: [],
+            redoStack: []
+          });
+        }
+        appState.isDualSpread = true;
+        appState.referencePageIndex = 0; // 左板是第 1 页
+        loadPage(1); // 右板加载第 2 页
+      }
+
+      const btn = document.getElementById('btnToggleDualView');
+      const lbl = document.getElementById('lblDualView');
+      const rightBadge = document.getElementById('rightPageBadge');
+      if (btn && lbl) {
+        if (appState.isDualSpread) {
+          btn.className = 'flex items-center gap-1 px-2.5 py-1 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg transition active:scale-95';
+          lbl.innerText = '单板模式';
+          if (rightBadge) rightBadge.classList.remove('hidden');
+        } else {
+          btn.className = 'flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-semibold shadow transition active:scale-95';
+          lbl.innerText = '双板并排';
+          if (rightBadge) rightBadge.classList.add('hidden');
+        }
+      }
+
+      resizeCanvas();
+      clearSelection();
+      redrawAllStrokes();
+      if (appState.isDualSpread) renderReferenceBoard();
+      updatePageManagerUI();
     }
 
     // ================= 🌟 浮窗互斥集中管理器 =================
@@ -5137,10 +5243,14 @@
 
     function updatePageManagerUI() {
       const total = appState.pages.length;
-      const cur = appState.currentPageIndex + 1;
       const indicator = document.getElementById('pageIndicator');
       if (indicator) {
-        indicator.innerText = `第 ${cur} / ${total} 页`;
+        if (appState.isDualSpread) {
+          indicator.innerText = `第 1 - 2 / ${Math.max(2, total)} 页 (双板)`;
+        } else {
+          const cur = appState.currentPageIndex + 1;
+          indicator.innerText = `第 ${cur} / ${total} 页`;
+        }
       }
       const btnPrev = document.getElementById('btnPrevPage');
       const btnNext = document.getElementById('btnNextPage');
@@ -5148,6 +5258,7 @@
       if (btnPrev) btnPrev.disabled = (appState.currentPageIndex === 0);
       if (btnNext) btnNext.disabled = (appState.currentPageIndex === total - 1);
       if (btnDel) btnDel.disabled = (total <= 1);
+      if (appState.isDualSpread) renderReferenceBoard();
     }
 
     const btnPrevPage = document.getElementById('btnPrevPage');
