@@ -9080,7 +9080,8 @@ ${out}</svg>`;
         return null;
       }
       function exportVideo() {
-        if (!appState.isPro) { openProModal(); return; }
+        // 回放弹窗层级比 Pro 弹窗高：先关掉回放，否则 Pro 弹窗 (以及家长验证后的购买页) 被挡在后面看不见
+        if (!appState.isPro) { close(); openProModal(); return; }
         if (!items.length) { kdToast(kdT('replay_empty')); return; }
         const mime = pickMime();
         if (!mime || !cv.captureStream) { kdToast(kdT('replay_unsupported'), 5000); return; }
