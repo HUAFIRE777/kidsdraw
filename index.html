@@ -201,6 +201,28 @@
     .selection-handle-s  { bottom: -5px; left: 50%; transform: translateX(-50%); cursor: ns-resize; }
     .selection-handle-w  { top: 50%; left: -5px; transform: translateY(-50%); cursor: ew-resize; }
     .selection-handle-e  { top: 50%; right: -5px; transform: translateY(-50%); cursor: ew-resize; }
+    /* 选区手柄 / 旋转球 / 操作胶囊按「屏幕尺寸」显示：双板缩小、放大缩放、手机触屏时都保持好点的大小
+       (--kd-k = 1 / 画板显示缩放；--kd-hs 手柄边长；--kd-rs 旋转球直径；--kd-ps 胶囊缩放) */
+    .selection-box.kd-sized { border-width: calc(1.5px * var(--kd-k)); }
+    .selection-box.kd-sized .selection-handle { width: var(--kd-hs); height: var(--kd-hs); border-width: calc(1.5px * var(--kd-k)); }
+    .selection-box.kd-sized .selection-handle-nw,
+    .selection-box.kd-sized .selection-handle-ne,
+    .selection-box.kd-sized .selection-handle-n { top: calc(var(--kd-hs) / -2); }
+    .selection-box.kd-sized .selection-handle-sw,
+    .selection-box.kd-sized .selection-handle-se,
+    .selection-box.kd-sized .selection-handle-s { bottom: calc(var(--kd-hs) / -2); }
+    .selection-box.kd-sized .selection-handle-nw,
+    .selection-box.kd-sized .selection-handle-sw,
+    .selection-box.kd-sized .selection-handle-w { left: calc(var(--kd-hs) / -2); }
+    .selection-box.kd-sized .selection-handle-ne,
+    .selection-box.kd-sized .selection-handle-se,
+    .selection-box.kd-sized .selection-handle-e { right: calc(var(--kd-hs) / -2); }
+    .selection-box.kd-sized .selection-rot-stem { top: calc(-24px * var(--kd-k)); height: calc(24px * var(--kd-k)); width: calc(1px * var(--kd-k)); }
+    .selection-box.kd-sized .selection-rot-handle { top: calc(-24px * var(--kd-k) - var(--kd-rs) / 2); width: var(--kd-rs); height: var(--kd-rs); border-width: calc(2px * var(--kd-k)); }
+    .selection-box.kd-sized .selection-action-pill { bottom: auto; top: calc(100% + 10px * var(--kd-k)); transform: translateX(-50%) scale(var(--kd-ps)); transform-origin: 50% 0; }
+    .selection-box.kd-sized.kd-pill-above .selection-action-pill { top: auto; bottom: calc(100% + 34px * var(--kd-k)); transform-origin: 50% 100%; }
+    .selection-box.kd-sized.kd-pill-above.kd-pill-inside .selection-action-pill { bottom: calc(6px * var(--kd-k)); }
+    @media (pointer: coarse) { .selection-action-pill button { padding: 6px 9px; font-size: 13px; } }
     
     /* 顶部 360° 旋转连杆与旋转手柄 */
     .selection-rot-stem {
@@ -4052,6 +4074,25 @@
       box.style.width = `${boxW}px`;
       box.style.height = `${boxH}px`;
 
+      // 手柄与胶囊按屏幕尺寸显示 (双板缩小 / 缩放 / 触屏都保持好点)
+      {
+        const uiK = 1 / Math.max(0.15, (appState.displayScale || 1) * (appState.zoom || 1));
+        const coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+        box.classList.add('kd-sized');
+        box.style.setProperty('--kd-k', String(uiK));
+        box.style.setProperty('--kd-hs', `${(coarse ? 18 : 11) * uiK}px`);
+        box.style.setProperty('--kd-rs', `${(coarse ? 22 : 14) * uiK}px`);
+        box.style.setProperty('--kd-ps', String(uiK));
+        // 选区靠近画板底部时，把操作胶囊放到选区上方，免得被画板边缘裁掉点不到
+        const pillH = (coarse ? 40 : 30) * uiK;
+        const roomBelow = cssHeight - (minY + boxH);
+        const roomAbove = minY;
+        if (roomBelow < pillH + 14 * uiK) {
+          box.classList.add('kd-pill-above');
+          if (roomAbove < pillH + 40 * uiK) box.classList.add('kd-pill-inside');
+        }
+      }
+
       box.innerHTML = `
         <!-- 360° 顶部旋转杆与旋转球手柄 (Figma 规范) -->
         <div class="selection-rot-stem"></div>
@@ -4360,6 +4401,18 @@
       });
 
       selectionOverlay.appendChild(box);
+      // 胶囊左右也不能伸出画板 (选区贴着画板左/右边时)
+      {
+        const pill = box.querySelector('.selection-action-pill');
+        const pr = pill && pill.getBoundingClientRect();
+        const cr = canvasCard.getBoundingClientRect();
+        if (pr && pr.width) {
+          let shift = 0;
+          if (pr.left < cr.left + 4) shift = cr.left + 4 - pr.left;
+          else if (pr.right > cr.right - 4) shift = cr.right - 4 - pr.right;
+          if (shift) pill.style.marginLeft = `${shift / Math.max(0.15, (appState.displayScale || 1) * (appState.zoom || 1))}px`;
+        }
+      }
     }
 
     function rotateSelectedItems(angleDelta) {
