@@ -5173,7 +5173,139 @@
       }
     }, { passive: false });
 
-    function scheduleAutosave() { /* autosave: see persistence section */ }
+    // ================= 💾 本地自动保存 (Autosave to localStorage) =================
+    // 保存所有页面 (笔迹/印章/线稿卡/文字/图片 dataURL)、当前页码、画纸与画幅；不保存撤销栈与视频。
+    var AUTOSAVE_KEY = 'eazyopc_kidsdraw_doc_v1';
+    var autosaveReady = false; // 恢复完成前绝不写入，避免空白画板覆盖已保存作品
+    var autosaveTimer = null;
+
+    function scheduleAutosave() {
+      if (!autosaveReady) return;
+      clearTimeout(autosaveTimer);
+      autosaveTimer = setTimeout(writeAutosave, 800);
+    }
+
+    function serializeStrokesForSave(strokes) {
+      return JSON.parse(JSON.stringify(strokes || [], (k, v) => (k === '_startedAt' ? undefined : v)));
+    }
+
+    function serializeTextsForSave(texts) {
+      return (texts || []).map(t => {
+        const c = JSON.parse(JSON.stringify(t));
+        delete c._editing;
+        return c;
+      });
+    }
+
+    function serializeImagesForSave(images) {
+      const out = [];
+      for (const im of (images || [])) {
+        const src = im && im.img ? im.img.src : (im && im.src);
+        if (!src || /^blob:/i.test(src)) continue;
+        out.push({
+          id: im.id, src,
+          x: im.x, y: im.y, width: im.width, height: im.height,
+          rotation: im.rotation || 0,
+          isFillLayer: !!im.isFillLayer
+        });
+      }
+      return out;
+    }
+
+    function buildAutosaveDoc(includeImages) {
+      saveCurrentPageState();
+      return {
+        v: 1,
+        savedAt: Date.now(),
+        currentPageIndex: appState.currentPageIndex,
+        paper: appState.paper,
+        ratio: appState.ratio,
+        pages: (appState.pages || []).map(p => ({
+          id: p.id,
+          strokes: serializeStrokesForSave(p.strokes),
+          texts: serializeTextsForSave(p.texts),
+          images: includeImages ? serializeImagesForSave(p.images) : []
+        }))
+      };
+    }
+
+    function writeAutosave() {
+      clearTimeout(autosaveTimer);
+      autosaveTimer = null;
+      if (!autosaveReady) return;
+      try {
+        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(buildAutosaveDoc(true)));
+        return;
+      } catch (err) {
+        // 多半是图片过大超出配额：退而求其次，只保存笔迹与文字
+      }
+      try {
+        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(buildAutosaveDoc(false)));
+      } catch (err2) {
+        try { console.warn('[KidsDraw] autosave skipped:', err2 && err2.name); } catch (_) {}
+      }
+    }
+
+    function flushAutosave() {
+      if (autosaveReady && autosaveTimer) writeAutosave();
+    }
+
+    function restoreAutosave() {
+      let doc = null;
+      try {
+        const raw = localStorage.getItem(AUTOSAVE_KEY);
+        if (raw) doc = JSON.parse(raw);
+      } catch (_) { doc = null; }
+      if (!doc || !Array.isArray(doc.pages) || doc.pages.length === 0) return false;
+
+      const rerender = () => {
+        redrawAllStrokes();
+        if (appState.isDualSpread) renderReferenceBoard();
+      };
+
+      appState.pages = doc.pages.map((pg, idx) => ({
+        id: pg.id || (Date.now() + idx),
+        strokes: Array.isArray(pg.strokes) ? pg.strokes : [],
+        texts: Array.isArray(pg.texts) ? pg.texts : [],
+        images: (Array.isArray(pg.images) ? pg.images : []).filter(im => im && im.src).map(im => {
+          const img = new Image();
+          img.onload = rerender;
+          img.src = im.src;
+          return {
+            id: im.id || (Date.now() + Math.random()),
+            img,
+            x: Number(im.x) || 0,
+            y: Number(im.y) || 0,
+            width: Number(im.width) || img.width || 100,
+            height: Number(im.height) || img.height || 100,
+            rotation: Number(im.rotation) || 0,
+            isFillLayer: !!im.isFillLayer
+          };
+        }),
+        history: [],
+        redoStack: []
+      }));
+
+      const idx = Math.max(0, Math.min(appState.pages.length - 1, Number(doc.currentPageIndex) || 0));
+      applyPageToState(idx);
+
+      const paperSel = document.getElementById('paperSelector');
+      if (doc.paper && paperSel && Array.from(paperSel.options).some(o => o.value === doc.paper)) {
+        appState.paper = doc.paper;
+        paperSel.value = doc.paper;
+      }
+      const ratioSel = document.getElementById('ratioSelector');
+      if (doc.ratio && ratioSel && Array.from(ratioSel.options).some(o => o.value === doc.ratio)) {
+        appState.ratio = doc.ratio;
+        ratioSel.value = doc.ratio;
+      }
+      return true;
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') flushAutosave();
+    });
+    window.addEventListener('pagehide', flushAutosave);
 
     // ================= ↩️ 撤销 / 重做 (Undo / Redo) =================
     // 历史条目统一格式 { strokes, texts, images }；左板 (第 1 页) 使用 pages[0].history / pages[0].redoStack，
@@ -6913,6 +7045,10 @@
       if (typeof applyTheme === 'function') applyTheme(savedTheme);
       const activeColorDot = document.getElementById('activeColorDot');
       if (activeColorDot && appState) activeColorDot.style.backgroundColor = appState.currentColor;
+      // 💾 首次渲染前恢复自动保存的作品，然后才允许写入
+      try { restoreAutosave(); } catch (err) { try { console.warn('[KidsDraw] restore failed', err); } catch (_) {} }
+      autosaveReady = true;
+      if (typeof updatePageManagerUI === 'function') updatePageManagerUI();
       if (typeof resizeCanvas === 'function') resizeCanvas();
     }
 
