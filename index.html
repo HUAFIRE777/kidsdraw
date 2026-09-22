@@ -4193,9 +4193,18 @@
         if (e.target.dataset.handle || e.target.dataset.rot || e.target.closest('.selection-action-pill')) return;
         e.stopPropagation();
         e.preventDefault();
-        saveHistory();
-        appState.isDraggingSelection = true;
-        appState.dragStartPos = getCanvasCoordinates(e);
+        // 双击 / 双击触屏：选中的是单个文字时直接进入编辑
+        const onlyText = appState.selectedTexts && appState.selectedTexts.length === 1 &&
+          !(appState.selectedStrokes && appState.selectedStrokes.length) && !(appState.selectedImages && appState.selectedImages.length);
+        const now = performance.now();
+        const last = appState._lastSelDown;
+        if (onlyText && last && last.target === appState.selectedTexts[0] && now - last.t < 420) {
+          appState._lastSelDown = null;
+          openRichTextEditor(appState.selectedTexts[0]);
+          return;
+        }
+        appState._lastSelDown = { t: now, target: onlyText ? appState.selectedTexts[0] : null };
+        beginSelectionDrag(getCanvasCoordinates(e));
       };
 
       // 🌟 8 方向手柄缩放 (手绘笔迹线条 + 图片 + 文本 完整缩放拉伸)
@@ -5173,9 +5182,7 @@
             pos.x <= appState.selectionBounds.x + appState.selectionBounds.width &&
             pos.y >= appState.selectionBounds.y &&
             pos.y <= appState.selectionBounds.y + appState.selectionBounds.height) {
-          saveHistory();
-          appState.isDraggingSelection = true;
-          appState.dragStartPos = pos;
+          beginSelectionDrag(pos);
           return;
         }
 
@@ -5190,13 +5197,11 @@
           }
         }
         if (hitImg) {
-          saveHistory();
           appState.selectedImages = [hitImg];
           appState.selectedTexts = [];
           appState.selectedStrokes = [];
           updateSelectionBoxUI();
-          appState.isDraggingSelection = true;
-          appState.dragStartPos = pos;
+          beginSelectionDrag(pos);
           return;
         }
 
@@ -5220,13 +5225,12 @@
           appState._lastClickedText = hitText;
           appState._lastTextClickTime = now;
 
-          saveHistory();
           appState.selectedTexts = [hitText];
           appState.selectedImages = [];
           appState.selectedStrokes = [];
           updateSelectionBoxUI();
-          appState.isDraggingSelection = true;
-          appState.dragStartPos = pos;
+          appState._lastSelDown = { t: now, target: hitText }; // 第二下会落在选区框上，由选区框识别双击
+          beginSelectionDrag(pos);
           return;
         }
 
@@ -5240,13 +5244,11 @@
           }
         }
         if (hitStroke) {
-          saveHistory();
           appState.selectedStrokes = [hitStroke];
           appState.selectedImages = [];
           appState.selectedTexts = [];
           updateSelectionBoxUI();
-          appState.isDraggingSelection = true;
-          appState.dragStartPos = pos;
+          beginSelectionDrag(pos);
           return;
         }
 
@@ -5264,9 +5266,7 @@
             pos.x <= appState.selectionBounds.x + appState.selectionBounds.width &&
             pos.y >= appState.selectionBounds.y &&
             pos.y <= appState.selectionBounds.y + appState.selectionBounds.height) {
-          saveHistory();
-          appState.isDraggingSelection = true;
-          appState.dragStartPos = pos;
+          beginSelectionDrag(pos);
           return;
         }
         clearSelection();
@@ -5427,6 +5427,8 @@
         const dy = pos.y - appState.dragStartPos.y;
         if (dx === 0 && dy === 0) return;
         appState.dragStartPos = pos;
+        // 真正开始移动时才写入撤销记录 (只是点一下选中不产生空的撤销步骤)
+        if (appState._dragSnapshot) { pushHistorySnapshot(appState._dragSnapshot); appState._dragSnapshot = null; }
 
         for (const s of (appState.selectedStrokes || [])) {
           if (s.isStamp) {
@@ -5490,6 +5492,7 @@
 
       if (appState.isDraggingSelection) {
         appState.isDraggingSelection = false;
+        appState._dragSnapshot = null;
         updateSelectionBoxUI();
         return;
       }
@@ -5974,6 +5977,21 @@
       appState.redoStack.length = 0; // 新操作清空重做栈
       appState.lastActiveBoard = 'right';
       scheduleAutosave();
+    }
+
+    // 把一个事先拍好的快照压入撤销栈 (选区拖动：按下时拍照，真正移动时才入栈)
+    function pushHistorySnapshot(snap) {
+      ensureRightHistory();
+      appState.history.push(snap);
+      if (appState.history.length > HISTORY_LIMIT) appState.history.shift();
+      appState.redoStack.length = 0;
+      appState.lastActiveBoard = 'right';
+      scheduleAutosave();
+    }
+    function beginSelectionDrag(pos) {
+      appState._dragSnapshot = snapshotBoard(appState);
+      appState.isDraggingSelection = true;
+      appState.dragStartPos = pos;
     }
 
     function saveLeftHistory() {
