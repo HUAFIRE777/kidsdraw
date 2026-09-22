@@ -762,6 +762,111 @@
       color: #ffffff !important;
       font-weight: 700 !important;
     }
+
+    /* ================= Round 1: 移动端 375px 布局 ================= */
+    .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    @media (max-width: 639px) {
+      /* 左侧工具坞更紧凑，画布从工具坞右侧开始 (resizeCanvas 同步预留宽度) */
+      body:not(.is-fullscreen) #workbenchWrapper { padding-left: 60px !important; }
+      #leftSidebar { top: 0.5rem !important; gap: 0.25rem !important; padding: 0.25rem !important; }
+      #leftSidebar > button,
+      #leftSidebar > div > button:first-child { width: 2.25rem !important; height: 2.25rem !important; }
+      #pageManagerDock #btnAddPage { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+      #pageManagerDock #btnToggleDualView { padding-left: 0.4rem !important; padding-right: 0.4rem !important; }
+    }
+
+    /* ================= Round 1: 白天模式 4 大弹窗统一高对比度 (规则 2) ================= */
+    /* 弹窗卡片：纯白底；内部卡片/色块：#f8fafc；全部文字 #0f172a 粗体；输入框白底深色边；按钮黑底白字 */
+    body.theme-light #proModal > div[class],
+    body.theme-light #exportModal > div[class],
+    body.theme-light #restoreModal > div[class],
+    body.theme-light #feedbackModal > div[class] {
+      background: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    body.theme-light :is(#proModal, #exportModal, #restoreModal, #feedbackModal) > div[class] :is(
+      .bg-slate-700, .bg-slate-800, .bg-slate-800\/80, .bg-slate-800\/90, .bg-slate-800\/60,
+      .bg-slate-900, .bg-slate-900\/90, .bg-slate-900\/80, .bg-slate-900\/60, .bg-slate-900\/50,
+      .bg-slate-950, .bg-slate-950\/80, .bg-slate-950\/60, .bg-slate-950\/40,
+      .bg-amber-500\/10, .bg-amber-500\/15, .bg-emerald-500\/10, .bg-indigo-500\/10, .bg-black\/40, .bg-black\/30) {
+      background: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    body.theme-light :is(#proModal, #exportModal, #restoreModal, #feedbackModal) :is(h1, h2, h3, h4, h5, p, span, label, div, strong, b, li, small, legend) {
+      color: #0f172a !important;
+    }
+    body.theme-light :is(#proModal, #exportModal, #restoreModal, #feedbackModal) :is(p, span, label, li, small, legend, div) {
+      font-weight: 700 !important;
+    }
+    body.theme-light :is(#proModal, #exportModal, #restoreModal, #feedbackModal) :is(h1, h2, h3, h4, h5, strong, b) {
+      font-weight: 800 !important;
+    }
+    body.theme-light :is(#proModal, #exportModal, #restoreModal, #feedbackModal) :is(input:not([type="radio"]):not([type="checkbox"]), textarea, select) {
+      background: #ffffff !important;
+      border: 1.5px solid #334155 !important;
+      color: #0f172a !important;
+      font-weight: 700 !important;
+    }
+    body.theme-light :is(#proModal, #exportModal, #restoreModal, #feedbackModal) :is(input, textarea)::placeholder {
+      color: #475569 !important;
+      font-weight: 600 !important;
+    }
+    body.theme-light :is(#proModal, #exportModal, #restoreModal, #feedbackModal) button[class],
+    body.theme-light :is(#proModal, #exportModal, #restoreModal, #feedbackModal) button[class] * {
+      background-color: #0f172a;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+    }
+    body.theme-light :is(#proModal, #exportModal, #restoreModal, #feedbackModal) button[class] {
+      background: #0f172a !important;
+      border-color: #0f172a !important;
+    }
+    body.theme-light :is(#proModal, #exportModal, #restoreModal, #feedbackModal) button[class] * {
+      background-color: transparent !important;
+    }
+    body.theme-light :is(#proModal, #exportModal, #restoreModal, #feedbackModal) button[class]:hover {
+      background: #334155 !important;
+    }
+    /* Pro 格式切换：未选中白底黑字，选中黑底白字，保证状态可辨 */
+    body.theme-light #exportModal button.btn-pro-fmt[class]:not(.bg-amber-500) {
+      background: #ffffff !important;
+      color: #0f172a !important;
+      border: 1.5px solid #334155 !important;
+    }
+    /* 关闭按钮 ✕：白底深色字，不做成黑块 */
+    body.theme-light :is(#btnCloseExportModal, #btnCloseRestoreModal, #btnCloseFeedbackModal)[class] {
+      background: transparent !important;
+      border-color: transparent !important;
+      color: #0f172a !important;
+    }
+    body.theme-light #proModal #btnCloseProModal[class] {
+      background: #ffffff !important;
+      border: 1.5px solid #334155 !important;
+      color: #0f172a !important;
+    }
+    /* 链接按钮 (如 Creem 购买、Canva/Figma) 保持可读 */
+    body.theme-light :is(#proModal, #exportModal, #restoreModal, #feedbackModal) a[class] {
+      font-weight: 800 !important;
+    }
+
+    /* 页码坞「双板并排」按钮：白天模式下深底白字 / 激活时靛蓝底白字 */
+    body.theme-light #pageManagerDock #btnToggleDualView {
+      background: #0f172a !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      border: 1px solid #0f172a !important;
+    }
+    body.theme-light #pageManagerDock #btnToggleDualView * {
+      color: #ffffff !important;
+      font-weight: 700 !important;
+    }
+    body.theme-light #pageManagerDock #btnToggleDualView.is-dual-active {
+      background: #4f46e5 !important;
+      border-color: #4338ca !important;
+    }
     
 </style>
   <!-- Open-Source Typography (Google Fonts) -->
@@ -792,10 +897,10 @@
             </linearGradient>
           </defs>
         </svg>
-        <div>
+        <div class="hidden min-[420px]:block">
           <div class="text-sm font-extrabold tracking-tight text-white flex items-center gap-1.5 leading-none">
             <span>KidsDraw</span>
-            <span class="text-[10px] font-semibold px-1.5 py-0.2 bg-pink-500/20 text-pink-300 rounded">by EazyOPC</span>
+            <span class="hidden sm:inline text-[10px] font-semibold px-1.5 py-0.2 bg-pink-500/20 text-pink-300 rounded">by EazyOPC</span>
           </div>
           <span class="text-[10px] text-slate-400 hidden sm:inline leading-none" data-i18n="site_subtitle">儿童趣味涂鸦与多彩蜡笔画板</span>
         </div>
@@ -803,7 +908,7 @@
     </div>
 
     <!-- 中部控制：画幅比例选择 & 纸张底纹 -->
-    <div class="flex items-center gap-2 overflow-x-auto py-1">
+    <div class="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 min-w-0 flex-1 sm:flex-initial">
       <div class="flex items-center gap-1 bg-slate-800/90 border border-slate-700/80 rounded-xl px-2 py-1 flex-shrink-0">
         <span class="text-[11px] text-slate-400 font-medium">📐 <span class="hidden md:inline" data-i18n="lbl_ratio">画幅</span>:</span>
         <select id="ratioSelector" class="bg-transparent text-slate-200 text-xs outline-none cursor-pointer font-medium max-w-[160px] sm:max-w-[200px]">
@@ -857,14 +962,14 @@
         <span class="hidden sm:inline" data-i18n="fullscreen">全屏</span>
       </button>
 
-      <button id="btnExport" class="flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-lg transition-transform active:scale-95">
+      <button id="btnExport" class="flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold px-2 sm:px-3 py-1.5 rounded-xl shadow-lg transition-transform active:scale-95">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-        <span data-i18n="export">导出</span>
+        <span class="hidden sm:inline" data-i18n="export">导出</span>
       </button>
 
       <div class="relative">
-        <button id="btnLangDropdown" class="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs cursor-pointer border border-slate-700">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
+        <button id="btnLangDropdown" class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs cursor-pointer border border-slate-700">
+          <svg class="w-3.5 h-3.5 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
           <span id="currentLangLabel">中</span> <span>▾</span>
         </button>
         <div id="langMenu" class="hidden absolute right-0 mt-1 w-32 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-1 z-50 flex flex-col gap-0.5 text-xs text-slate-200">
@@ -878,7 +983,7 @@
         </div>
       </div>
 
-      <button id="btnTopProBadge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/15 border border-amber-500/30 hover:bg-amber-500/25 text-amber-300 rounded-xl text-xs font-semibold transition">
+      <button id="btnTopProBadge" class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 bg-amber-500/15 border border-amber-500/30 hover:bg-amber-500/25 text-amber-300 rounded-xl text-xs font-semibold transition">
         <svg class="w-3 h-3 text-amber-400 inline-block" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
         <span id="proBadgeLabel">Pro</span>
       </button>
@@ -1318,14 +1423,14 @@
     </div>
 
     <!-- 漫画分镜与无限纸张多页管理器 (Page Manager Dock) -->
-    <div id="pageManagerDock" class="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 px-3 py-1.5 rounded-full shadow-xl text-xs text-slate-200 whitespace-nowrap flex-nowrap shrink-0 max-w-[92vw] select-none">
+    <div id="pageManagerDock" class="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 sm:gap-1.5 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 px-2 sm:px-3 py-1.5 rounded-full shadow-xl text-xs text-slate-200 whitespace-nowrap flex-nowrap shrink-0 max-w-[92vw] overflow-x-auto scrollbar-none select-none">
       <button id="btnPrevPage" class="p-1 hover:bg-slate-800 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition" title="上一页 (Page Up)">◀</button>
-      <span id="pageIndicator" class="font-mono whitespace-nowrap text-rose-400 shrink-0 px-2 text-xs font-semibold">第 1 / 1 页</span>
+      <span id="pageIndicator" class="font-mono whitespace-nowrap text-rose-400 shrink-0 px-1 sm:px-2 text-[11px] sm:text-xs font-semibold">第 1 / 1 页</span>
       <button id="btnNextPage" class="p-1 hover:bg-slate-800 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition" title="下一页 (Page Down)">▶</button>
       <span class="text-slate-600">|</span>
-      <button id="btnAddPage" class="flex items-center gap-1.5 px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-semibold shadow transition active:scale-95" title="新建绘本页 / 漫画下一页 (+)"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span data-i18n="add_page" class="text-white font-bold">加页</span></button>
+      <button id="btnAddPage" class="flex items-center gap-1.5 px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-semibold shadow transition active:scale-95" title="新建绘本页 / 漫画下一页 (+)"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span data-i18n="add_page" class="hidden sm:inline text-white font-bold">加页</span></button>
       <button id="btnToggleDualView" class="flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-semibold shadow transition active:scale-95" title="开启双画板并排 (双板同时书写)">
-        <span>📖</span> <span id="lblDualView" data-i18n="dual_view">双板并排</span>
+        <span>📖</span> <span id="lblDualView" class="hidden sm:inline" data-i18n="dual_view">双板并排</span>
       </button>
       <button id="btnDeletePage" class="p-1 hover:bg-rose-950/60 text-rose-400 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition" title="删除当前页">🗑️</button>
     </div>
@@ -3011,7 +3116,9 @@
     function resizeCanvas() {
       dpr = Math.min(window.devicePixelRatio || 1, 3);
       const containerRect = workbenchWrapper.getBoundingClientRect();
-      let maxW = Math.max(300, containerRect.width - (document.body.classList.contains('is-fullscreen') ? 0 : 32));
+      // 小屏 (<640px) 左侧工具坞占 60px 左内边距，这里同步扣除，避免画布被工具坞遮挡或向右溢出
+      const dockReserve = (!document.body.classList.contains('is-fullscreen') && window.innerWidth < 640) ? 52 : 0;
+      let maxW = Math.max(240, containerRect.width - (document.body.classList.contains('is-fullscreen') ? 0 : 32) - dockReserve);
       let maxH = Math.max(300, containerRect.height - (document.body.classList.contains('is-fullscreen') ? 0 : 32));
       // 双板模式下每块画板可用的显示宽度 (逻辑尺寸不变，只缩放显示)
       const dualMaxW = Math.max(120, (maxW - 36) * 0.48);
