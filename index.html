@@ -4878,15 +4878,16 @@
       wrapper.id = 'inlineCanvasTextWrapper';
       wrapper.className = 'absolute z-50 flex flex-col gap-1.5 select-none pointer-events-auto';
       
-      const clampX = Math.max(10, Math.min(cssWidth - 280, currentX));
+      const clampX = Math.max(6, currentX); // 右侧由 clampEditor 按实际宽度夹紧
+      const editorBaseX = currentX, editorBaseY = currentY;
       const clampY = Math.max(8, currentY - 48);
       wrapper.style.left = `${clampX}px`;
       wrapper.style.top = `${clampY}px`;
 
       wrapper.innerHTML = `
         <!-- 迷你悬浮属性栏 (Figma / Photoshop 紧凑规格) -->
-        <div class="inline-text-toolbar flex items-center gap-1.5 px-2 py-1 bg-slate-900/95 border border-indigo-500/80 rounded-xl shadow-xl text-white text-xs backdrop-blur-md">
-          <select class="inline-font-select bg-slate-800 text-white text-[11px] px-1.5 py-0.5 rounded border border-slate-700 outline-none cursor-pointer">
+        <div class="inline-text-toolbar flex flex-wrap items-center gap-1.5 px-2 py-1 bg-slate-900/95 border border-indigo-500/80 rounded-xl shadow-xl text-white text-xs backdrop-blur-md">
+          <select class="inline-font-select bg-slate-800 text-white text-[11px] px-1.5 py-0.5 rounded border border-slate-700 outline-none cursor-pointer" style="max-width:150px">
             <option value="'ZCOOL KuaiLe', cursive, sans-serif">🎈 站酷快乐体 (可爱漫画)</option>
             <option value="'Noto Sans SC', sans-serif">📐 思源黑体 (现代黑体)</option>
             <option value="'Noto Serif SC', serif">📖 思源宋体 (典雅经典)</option>
@@ -4907,10 +4908,27 @@
       `;
 
       canvasCard.appendChild(wrapper);
+      // 触屏点一下打开编辑器后，浏览器会在同一位置补发一个 click：不能让它误点到刚出现的「完成 / A+」等按钮
+      const editorOpenedAt = performance.now();
+      wrapper.addEventListener('click', (ev) => {
+        if (performance.now() - editorOpenedAt < 450 && ev.detail > 0) { ev.stopPropagation(); ev.preventDefault(); }
+      }, true);
 
-      // 放进画布后按实际宽度再夹一次，避免文字工具条超出画板右边
-
-      { const ww = wrapper.offsetWidth; const left = parseFloat(wrapper.style.left) || 0; if (ww && left + ww > cssWidth - 6) wrapper.style.left = `${Math.max(6, cssWidth - ww - 6)}px`; }
+      // 放进画布后按实际宽度夹紧：工具条和输入框都不能超出画板右边 (窄屏自动换行)
+      const editorMaxW = Math.max(150, cssWidth - 12);
+      wrapper.style.width = 'max-content';
+      wrapper.style.maxWidth = `${editorMaxW}px`;
+      const clampEditor = () => {
+        const ww = wrapper.offsetWidth;
+        if (!ww) return;
+        const left = Math.max(6, Math.min(clampX, cssWidth - ww - 6));
+        wrapper.style.left = `${left}px`;
+        const wh = wrapper.offsetHeight;
+        const top = Math.max(6, Math.min(clampY, cssHeight - wh - 6));
+        wrapper.style.top = `${top}px`;
+        // 新文字跟着输入框走 (所见即所得)；已有文字保持原位置
+        if (!targetText) { currentX = editorBaseX + (left - clampX); currentY = editorBaseY + (top - clampY); }
+      };
 
       const textarea = wrapper.querySelector('#inlineCanvasTextArea');
       textarea.value = currentVal; // 不把用户文字拼进 innerHTML (避免注入)，直接赋值
@@ -4928,8 +4946,10 @@
         textarea.style.height = 'auto';
         textarea.style.height = `${Math.max(currentSize * 1.5, textarea.scrollHeight)}px`;
         textarea.style.width = 'auto';
-        textarea.style.width = `${Math.max(160, textarea.scrollWidth + 24)}px`;
+        textarea.style.width = `${Math.min(editorMaxW, Math.max(Math.min(160, editorMaxW), textarea.scrollWidth + 24))}px`;
+        clampEditor();
       };
+      const refocus = () => { try { textarea.focus({ preventScroll: true }); } catch (_) { textarea.focus(); } };
 
       textarea.addEventListener('input', autoResize);
       autoResize();
@@ -4942,6 +4962,7 @@
         currentFont = fontSelect.value;
         textarea.style.fontFamily = currentFont;
         autoResize();
+        refocus();
       };
 
       szMinus.onclick = (e) => {
@@ -4950,6 +4971,7 @@
         szVal.innerText = `${currentSize}px`;
         textarea.style.fontSize = `${currentSize}px`;
         autoResize();
+        refocus();
       };
 
       szPlus.onclick = (e) => {
@@ -4958,6 +4980,7 @@
         szVal.innerText = `${currentSize}px`;
         textarea.style.fontSize = `${currentSize}px`;
         autoResize();
+        refocus();
       };
 
       btnBold.onclick = (e) => {
@@ -4966,12 +4989,14 @@
         btnBold.className = `btn-bold-toggle px-2 py-0.5 rounded text-[11px] font-bold ${isBold ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`;
         textarea.style.fontWeight = isBold ? 'bold' : 'normal';
         autoResize();
+        refocus();
       };
 
       colorInput.oninput = () => {
         currentColor = colorInput.value;
         textarea.style.color = currentColor;
       };
+      colorInput.onchange = () => { currentColor = colorInput.value; textarea.style.color = currentColor; refocus(); };
 
       let committed = false;
       function commitAndClose() {
