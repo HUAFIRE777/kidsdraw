@@ -994,6 +994,7 @@
     .kd-panel-head .kd-modal-close { margin-left: auto; }
     .kd-panel-hint { margin: 0; font-size: 12px; line-height: 1.5; color: var(--kd-muted); }
     body.theme-light .kd-panel-hint, body.theme-light .kd-panel-meta { font-weight: 700; }
+    #btnCurrentBrush .kd-brush-caret { position: absolute; right: 1px; bottom: 0; font-size: 9px; line-height: 1; opacity: .7; pointer-events: none; }
     .kd-lib-panel { width: min(560px, calc(100vw - 88px)); max-height: calc(100% - 24px); overflow: hidden; }
     .kd-chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; flex-shrink: 0; }
     .kd-chips::-webkit-scrollbar { display: none; }
@@ -1389,6 +1390,7 @@
       <!-- 1. ✏️ 奇趣画笔 (主笔刷，点击可画，点击弹出笔刷库) -->
       <button id="btnCurrentBrush" class="tool-btn w-10 h-10 rounded-2xl text-stone-700 dark:text-slate-300 hover:bg-amber-100 dark:hover:bg-slate-800 text-sm transition flex items-center justify-center tool-btn-active relative" data-tool="crayon" data-i18n-title="tip_brush" title="✏️ 炫彩蜡笔与奇趣笔刷">
         <span id="curBrushIcon" class="text-xl">🖍️</span>
+        <span class="kd-brush-caret" aria-hidden="true">▾</span>
       </button>
 
       <!-- 2. 🪣 颜料智能填色桶 (Flood Fill 秒级色彩灌注) -->
@@ -1434,7 +1436,7 @@
         <span id="activeColorDot" class="w-5 h-5 rounded-full block border-2 border-white bg-pink-500 shadow-md"></span>
       </button>
         <button id="btnToolbarSize" class="px-1 py-0.5 rounded-md text-stone-500 dark:text-slate-400 hover:bg-stone-100 dark:hover:bg-slate-800 text-[9px] font-mono font-bold leading-none transition" title="调整笔刷粗细">
-          <span id="toolbarSizeDisplay">4px</span>
+          <span id="toolbarSizeDisplay">8px</span>
         </button>
       </div>
 
@@ -3385,7 +3387,7 @@
 
     const appState = {
       lang: 'zh',
-      tool: 'pen',        // 'select' | 'pen' | 'ballpoint' | 'pencil' | 'brush' | 'crayon' | 'highlighter' | 'spray' | 'text' | 'eraser' | 'lasso' | 'laser'
+      tool: 'crayon',     // 与左侧高亮的「蜡笔」按钮一致 · 'select' | 'pen' | 'ballpoint' | 'pencil' | 'brush' | 'crayon' | 'highlighter' | 'spray' | 'text' | 'eraser' | 'lasso' | 'laser'
       paper: 'ivory',
       ratio: 'free',
       currentColor: '#f43f5e',
@@ -3814,6 +3816,8 @@
           targetCtx.lineCap = 'round';
           targetCtx.lineJoin = 'round';
           targetCtx.lineWidth = Math.max(1, s.size * 0.85);
+        } else if (kdApplyBrushStyle(targetCtx, s)) {
+          // 笔刷工坊：马克笔 / 粉笔 / 虚线笔 / 书法笔 等
         } else {
           // 钢笔细线 / 默认
           targetCtx.strokeStyle = s.color;
@@ -4650,9 +4654,45 @@
       if (tool === 'brush') return baseSize * (0.7 + 0.8 * pressure);
       if (tool === 'crayon') return baseSize * 1.15;
       if (tool === 'ballpoint') return baseSize * 0.82;
-      if (tool === 'highlighter') return baseSize * 3.6;
+      if (tool === 'highlighter') return baseSize; // 渲染时再 ×3.6 (之前这里也 ×3.6，荧光笔粗到 100px)
       if (tool === 'spray') return baseSize * 2.2;
+      if (tool === 'marker') return baseSize * 1.6;
+      if (tool === 'fineliner') return Math.max(1, baseSize * 0.4);
+      if (tool === 'maru') return Math.max(1, baseSize * 0.3);
+      if (tool === 'blue_pencil') return baseSize * 0.6;
+      if (tool === 'chalk') return baseSize * 1.3;
+      if (tool === 'calligraphy') return baseSize * 1.3;
+      if (tool === 'fude_pen') return baseSize * (0.6 + 0.9 * pressure);
+      if (tool === 'white_gel') return baseSize * 0.9;
+      if (tool === 'dotted') return baseSize * 0.8;
       return baseSize * (0.5 + 0.8 * Math.pow(pressure, 1.3));
+    }
+
+    // 🎨 笔刷工坊各笔刷的外观 (主画板、左板、实时预览、导出共用)
+    const KD_BRUSH_COLOR = { white_gel: '#ffffff', blue_pencil: '#60a5fa' };
+    function kdStrokeColor(tool) { return KD_BRUSH_COLOR[tool] || appState.currentColor; }
+    function kdBrushStyle(s) {
+      const w = Number(s.size) || 4;
+      switch (s.tool) {
+        case 'marker': return { alpha: 0.8 };
+        case 'blue_pencil': return { alpha: 0.7 };
+        case 'chalk': return { alpha: 0.75, dash: [Math.max(3, w * 1.1), Math.max(2, w * 0.6)] };
+        case 'calligraphy': return { alpha: 1, cap: 'butt', join: 'bevel' };
+        case 'dotted': return { alpha: 1, dash: [Math.max(3, w * 1.8), Math.max(3, w * 1.5)] };
+        case 'fineliner': case 'maru': case 'white_gel': return { alpha: 1 };
+        default: return null;
+      }
+    }
+    function kdApplyBrushStyle(c, s) {
+      const st = kdBrushStyle(s);
+      if (!st) return false;
+      c.strokeStyle = s.color; c.fillStyle = s.color;
+      c.globalAlpha = st.alpha;
+      c.lineCap = st.cap || 'round';
+      c.lineJoin = st.join || 'round';
+      c.lineWidth = Math.max(1, Number(s.size) || 4);
+      if (st.dash) c.setLineDash(st.dash);
+      return true;
     }
 
     // 落笔第一个点的即时预览 (喷枪画颗粒，其它画笔画圆点)
@@ -4755,7 +4795,7 @@
         currentRefStroke = {
           id: Date.now() + Math.random(),
           tool: appState.tool,
-          color: appState.currentColor,
+          color: kdStrokeColor(appState.tool),
           size: Math.max(1.5, strokeWidth),
           points: [pos]
         };
@@ -4796,7 +4836,7 @@
         if (!isRefDrawing) return;
         if (e && refActivePointerId !== null && e.pointerId !== refActivePointerId) return;
         try { if (e) refCanvas.releasePointerCapture(e.pointerId); } catch (_) {}
-        if (currentRefStroke) delete currentRefStroke._startedAt;
+        if (currentRefStroke) { delete currentRefStroke._startedAt; delete currentRefStroke._dashLen; }
         isRefDrawing = false;
         currentRefStroke = null;
         refActivePointerId = null;
@@ -5153,6 +5193,25 @@
         lctx.moveTo(p1.x, p1.y);
         lctx.lineTo(p2.x, p2.y);
         lctx.stroke();
+      } else if (s.tool === 'kaleidoscope') {
+        // 🌸 万花筒：边画边同步画出 4 轴旋转 + 镜像的 8 份对称笔迹 (与 renderKaleidoscopeStroke 完全一致)
+        const kcx = cssWidth / 2, kcy = cssHeight / 2;
+        lctx.strokeStyle = s.color || '#ec4899';
+        lctx.lineWidth = s.size || 4;
+        lctx.lineCap = 'round';
+        lctx.lineJoin = 'round';
+        for (const angle of [0, Math.PI / 2, Math.PI, (Math.PI * 3) / 2]) {
+          for (const mirror of [1, -1]) {
+            lctx.save();
+            lctx.translate(kcx, kcy);
+            lctx.rotate(angle);
+            lctx.beginPath();
+            lctx.moveTo(p1.x - kcx, mirror * (p1.y - kcy));
+            lctx.lineTo(p2.x - kcx, mirror * (p2.y - kcy));
+            lctx.stroke();
+            lctx.restore();
+          }
+        }
       } else if (s.tool === 'spray') {
         lctx.fillStyle = s.color;
         lctx.globalAlpha = 0.45;
@@ -5172,6 +5231,11 @@
         lctx.lineCap = 'round';
         lctx.lineJoin = 'round';
         lctx.lineWidth = Math.max(1, s.size * dynamicTaper);
+        if (kdApplyBrushStyle(lctx, s)) {
+          // 虚线类笔刷：按已画长度续上虚线节奏，避免每一小段都从头开始
+          s._dashLen = (s._dashLen || 0) + dist;
+          lctx.lineDashOffset = s._dashLen;
+        }
 
         const pts = s.points;
         if (pts && pts.length >= 3) {
@@ -5392,7 +5456,7 @@
       currentStroke = {
         id: Date.now() + Math.random(),
         tool: appState.tool,
-        color: appState.currentColor,
+        color: kdStrokeColor(appState.tool),
         size: Math.max(1.5, strokeWidth),
         points: [pos]
       };
@@ -5591,10 +5655,12 @@
         return;
       }
       const finishedStroke = isDrawing && !!currentStroke;
-      if (currentStroke) delete currentStroke._startedAt;
+      const finishedKaleido = finishedStroke && ['kaleidoscope', 'chalk', 'dotted'].includes(currentStroke.tool);
+      if (currentStroke) { delete currentStroke._startedAt; delete currentStroke._dashLen; }
       isDrawing = false;
       currentStroke = null;
       activePointerId = null;
+      if (finishedKaleido) redrawAllStrokes(); // 用完整渲染替换实时预览，保证对称图案平滑一致
       if (finishedStroke) scheduleAutosave();
     }
     window.addEventListener('pointerup', onMainPointerUp);
@@ -5876,7 +5942,7 @@
     }
 
     function serializeStrokesForSave(strokes) {
-      return JSON.parse(JSON.stringify(strokes || [], (k, v) => (k === '_startedAt' ? undefined : v)));
+      return JSON.parse(JSON.stringify(strokes || [], (k, v) => (k === '_startedAt' || k === '_dashLen' ? undefined : v)));
     }
 
     function serializeTextsForSave(texts) {
@@ -7855,9 +7921,17 @@ ${out}</svg>`;
       }
 
       if (btnCurrentBrush && brushStudioFlyout) {
+        // 第一下：拿起当前画笔；已经是当前画笔时再点一下：打开 / 收起「笔刷工坊」(16 种笔刷)
         btnCurrentBrush.onclick = (e) => {
           e.stopPropagation();
-          appState.tool = btnCurrentBrush.dataset.tool || 'gpen';
+          const cur = btnCurrentBrush.dataset.tool || 'crayon';
+          if (appState.tool === cur) {
+            const wasHidden = brushStudioFlyout.classList.contains('hidden');
+            if (typeof closeAllFlyouts === 'function') closeAllFlyouts('brushStudioFlyout');
+            brushStudioFlyout.classList.toggle('hidden', !wasHidden);
+            return;
+          }
+          appState.tool = cur;
           if (typeof updateToolButtonsUI === 'function') updateToolButtonsUI();
         };
       }
