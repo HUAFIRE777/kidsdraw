@@ -62,7 +62,7 @@
             "name": "Is KidsDraw free to use without sign-up?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Yes, KidsDraw is 100% free with no registration, no sign-up, and zero ads interrupting your child's drawing flow."
+              "text": "Yes, KidsDraw is 100% free to use with no registration and no sign-up. Drawing happens right in your browser."
             }
           },
           {
@@ -2230,6 +2230,21 @@
         tip_pencil: '✏️ 铅笔 (细颗粒素描)',
         tip_highlighter: '🪄 荧光重点笔 (几何高光填充)',
         add_page: '加页',
+        dual_view: '双板并排', dual_view_exit: '单板模式',
+        page_indicator: '第 {cur} / {total} 页', page_indicator_dual: '第 1 - {cur} / {total} 页 (双板)',
+        confirm_clear_all: '确定要清空当前画纸上的所有涂鸦、印章、文字与图片吗？',
+        export_modal_title: '导出作品 · Export Center', export_modal_desc: '请选择适合您的导出规格 (二选一)',
+        tier_free_title: '选项一：免费普通导出', free_badge: '免费版', free_price: '$0 免费',
+        tier_free_desc: '输出 1080P 标准高清 PNG 格式，带微小 EazyOPC 水印。适合日常草图构思、随手记录与社媒快速分享。',
+        tier_pro_title: '选项二：Pro 终身版',
+        tier_pro_desc: '单次 $4.99 永久买断，解锁<strong>全部 4 大专业规格</strong>与商业授权，跨设备终身有效，无任何后续订阅费：',
+        pro_choose_format: '选择本次导出的 Pro 文件规格：',
+        btn_open_canva: '前往 Canva.com', btn_open_figma: '前往 Figma.com',
+        lbl_export_default: '免费导出 1080P 标准图 (带水印)',
+        btn_open_restore: '输入卡密或邮箱直接使用', restore_title: '输入卡密或购买邮箱直接使用',
+        btn_confirm_restore: '立即验证并激活此设备',
+        pro_perk_5: '<strong>一次付费 · 永久使用</strong>（全部功能统一打包，无后续收费）',
+        license_placeholder: '输入卡密 (如 EZPRO-...)',
         confirm_delete_page: '确定要删除当前绘本画纸页吗？此操作无法撤销。',
         site_subtitle: '儿童趣味涂鸦与多彩蜡笔画板',
         lbl_ratio: '画幅', lbl_paper: '画纸', fullscreen: '全屏', exit_fullscreen: '退出全屏',
@@ -2345,6 +2360,21 @@
         tip_pencil: '✏️ Pencil (Graphite sketching texture)',
         tip_highlighter: '🪄 Highlighter (Semi-transparent overlay)',
         add_page: 'Add Page',
+        dual_view: 'Dual Boards', dual_view_exit: 'Single Board',
+        page_indicator: 'Page {cur} / {total}', page_indicator_dual: 'Pages 1 - {cur} / {total} (Dual)',
+        confirm_clear_all: 'Clear everything on this page (drawings, stamps, text and images)?',
+        export_modal_title: 'Export Artwork', export_modal_desc: 'Choose one export option',
+        tier_free_title: 'Option 1: Free Standard Export', free_badge: 'Free', free_price: '$0 Free',
+        tier_free_desc: 'Standard 1080P PNG with a small EazyOPC watermark. Great for everyday sketches and quick sharing.',
+        tier_pro_title: 'Option 2: Pro Lifetime',
+        tier_pro_desc: 'A one-time $4.99 purchase unlocks <strong>all 4 pro export formats</strong> and commercial use on any device, with no subscription:',
+        pro_choose_format: 'Choose the Pro file format for this export:',
+        btn_open_canva: 'Open Canva.com', btn_open_figma: 'Open Figma.com',
+        lbl_export_default: 'Free 1080P export (with watermark)',
+        btn_open_restore: 'Have a license key or purchase email?', restore_title: 'Enter your license key or purchase email',
+        btn_confirm_restore: 'Verify & activate this device',
+        pro_perk_5: '<strong>One-time payment · lifetime use</strong> (all features included, no recurring fees)',
+        license_placeholder: 'Enter license key (e.g. EZPRO-...)',
         confirm_delete_page: 'Are you sure you want to delete this drawing page?',
         site_subtitle: 'Kids Fun Doodle & Colorful Crayon Board',
         lbl_ratio: 'Ratio', lbl_paper: 'Paper', fullscreen: 'Fullscreen', exit_fullscreen: 'Exit Fullscreen',
@@ -5212,7 +5242,8 @@
         if (canvaBox) canvaBox.classList.add('hidden');
 
         btnExecuteExport.className = 'w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl shadow-xl transition-all text-xs flex items-center justify-center gap-2 cursor-pointer';
-        lblExecuteExport.innerText = '免费导出 1080P 标准图 (带水印)';
+        const exDict = TRANSLATIONS[appState.lang] || TRANSLATIONS.zh;
+        lblExecuteExport.innerText = exDict.lbl_export_default || TRANSLATIONS.zh.lbl_export_default || '免费导出 1080P 标准图 (带水印)';
       } else {
         if (cardFree) {
           cardFree.classList.remove('border-emerald-500');
@@ -5858,20 +5889,26 @@
     function setLanguage(lang) {
       if (!TRANSLATIONS[lang]) lang = 'en';
       appState.lang = lang;
-      localStorage.setItem('user_lang_pref', lang);
+      try { localStorage.setItem('user_lang_pref', lang); } catch (_) {}
+      try { document.cookie = `user_lang_pref=${lang}; path=/; max-age=31536000; SameSite=Lax`; } catch (_) {}
+      const htmlLangs = { zh: 'zh-CN', en: 'en', ja: 'ja', ko: 'ko', de: 'de', es: 'es', fr: 'fr' };
+      document.documentElement.lang = htmlLangs[lang] || lang;
       const labels = { zh: '中', en: 'EN', ja: '日', ko: '한', de: 'DE', es: 'ES', fr: 'FR' };
       document.getElementById('currentLangLabel').textContent = labels[lang] || 'EN';
       const dict = TRANSLATIONS[lang];
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (dict[key]) el.textContent = dict[key];
+        if (!dict[key]) return;
+        // Trusted dictionary only: allow simple <strong>/<br> markup, everything else as plain text
+        if (/<(strong|br)\b/i.test(dict[key])) el.innerHTML = dict[key];
+        else el.textContent = dict[key];
       });
       document.querySelectorAll('[data-i18n-title]').forEach(el => {
         const key = el.getAttribute('data-i18n-title');
         if (dict[key]) el.title = dict[key];
       });
-      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-        const key = el.getAttribute('data-i18n-placeholder');
+      document.querySelectorAll('[data-i18n-ph], [data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-ph') || el.getAttribute('data-i18n-placeholder');
         if (dict[key]) el.placeholder = dict[key];
       });
       if (dict.ratios) {
@@ -6603,7 +6640,15 @@
         }
       });
 
-      const savedLang = localStorage.getItem('user_lang_pref') || 'zh';
+      // Language priority: ?lang=xx (if supported) > localStorage > default zh
+      let savedLang = 'zh';
+      try {
+        const qLang = (new URLSearchParams(window.location.search).get('lang') || '').toLowerCase();
+        let stored = null;
+        try { stored = localStorage.getItem('user_lang_pref'); } catch (_) {}
+        if (qLang && TRANSLATIONS[qLang]) savedLang = qLang;
+        else if (stored && TRANSLATIONS[stored]) savedLang = stored;
+      } catch (_) {}
       if (typeof setLanguage === 'function') setLanguage(savedLang);
       const savedTheme = localStorage.getItem('eazyopc_theme') || 'dark';
       if (typeof applyTheme === 'function') applyTheme(savedTheme);
