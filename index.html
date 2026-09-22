@@ -6975,6 +6975,9 @@ ${out}</svg>`;
       btn.onclick = () => {
         appState.tool = btn.dataset.tool;
         updateToolButtonsUI();
+        // 从「更多工具」抽屉选好工具后立即收起抽屉，否则在手机上抽屉会一直盖住画板，下一次点画板会误点到抽屉里的按钮
+        const drawer = document.getElementById('moreToolsDrawer');
+        if (drawer && drawer.contains(btn)) drawer.classList.add('hidden');
       };
     });
 
